@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Post from "../models/post.js";
+import User from "../models/user.js";
 
 export const postsController = {
   async get(req, res) {
@@ -14,9 +15,13 @@ export const postsController = {
   async post(req, res) {
     const post = req.body;
     const userId = req.headers.user.userId;
-    post.authorId = userId;
-    const newPost = new Post(post);
     try {
+      const userData = await User.findOne({ _id: userId });
+      const newPost = new Post({
+        ...post,
+        author: userData.name,
+        authorId: userId,
+      });
       await newPost.save();
       res.status(200).json(newPost);
     } catch (err) {
@@ -86,6 +91,9 @@ const isIdValid = async (id) => {
 const checkForPermissionOnPost = async (id, userId) => {
   const oldPost = await Post.findById(id);
   if (oldPost.authorId !== userId)
-    throw { status: 401, message: "No permission to perform any operation on this post." };
+    throw {
+      status: 401,
+      message: "No permission to perform any operation on this post.",
+    };
   return;
 };

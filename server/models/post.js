@@ -3,9 +3,9 @@ import mongoose from "mongoose";
 const postSchema = mongoose.Schema(
   {
     author: { type: String, required: true },
-    authorId: {type: String, required: true },
+    authorId: { type: String, required: true },
     title: { type: String, required: true },
-    description: String,
+    description: { type: String, default: "" },
     tags: [String],
     selectedFile: String,
     likes: {
