@@ -42,10 +42,14 @@ export default makeStyles({
     margin: "20px",
   },
   title: {
-    padding: "0 16px",
+    padding: "0 4px",
+  },
+  description: {
+    padding: "0 4px",
+    overflowWrap: "break-word",
   },
   cardActions: {
-    padding: "0 16px 8px 16px",
+    padding: "0 15px 8px 15px",
     display: "flex",
     justifyContent: "space-between",
   },

@@ -17,6 +17,9 @@ export default makeStyles((theme) => ({
   fileInput: {
     width: "97%",
     margin: "10px 0",
+    "& input[type=file]::file-selector-button": {
+      padding: ".2em .4em",
+    },
   },
   buttonSubmit: {
     marginBottom: 10,

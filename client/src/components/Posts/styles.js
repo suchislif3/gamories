@@ -1,7 +1,7 @@
 import { makeStyles } from "@material-ui/core";
 
 export default makeStyles((theme) => ({
-  mainContainer: {
+/*   mainContainer: {
     display: "flex",
     alignItems: "center",
   },
@@ -10,5 +10,5 @@ export default makeStyles((theme) => ({
   },
   actionDiv: {
     textAlign: "center",
-  },
+  }, */
 }));

@@ -1,26 +1,33 @@
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { Button, Paper, TextField, Typography } from "@material-ui/core";
 import FileBase from "react-file-base64";
-import { useDispatch } from "react-redux";
 
 import useStyles from "./styles";
-import { createPost } from "../../actions/postsAction";
+import { createPost, updatePost } from "../../actions/postsAction";
+import { changePostData, changePostInputError, clearCurrentPost } from "../../actions/currentPostAction";
 
 const Form = () => {
   const classes = useStyles();
-  const [postData, setPostData] = useState({
-    title: "",
-    description: "",
-    tags: "",
-    selectedFile: "",
-  });
+  const user = useSelector((state) => state.user);
+  const postId = useSelector((state) => state.currentPost.id);
+  const postData = useSelector((state) => state.currentPost.data);
+  const inputError = useSelector((state) => state.currentPost.inputError);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(createPost(postData))
+    if (!postData.title) {
+      dispatch(changePostInputError(true));
+      return;
+    }
+    postId
+      ? dispatch(updatePost(postId, postData))
+      : dispatch(createPost(postData));
+    dispatch(clearCurrentPost());
   };
-  const clear = () => {};
+
   return (
     <Paper className={classes.paper}>
       <form
@@ -29,14 +36,21 @@ const Form = () => {
         className={`${classes.root} ${classes.form}`}
         onSubmit={handleSubmit}
       >
-        <Typography variant="h6">Create a Gamory</Typography>
+        <Typography variant="h6">
+          {postId ? "Edit" : "Share"} your Gamory
+        </Typography>
         <TextField
           name="title"
           variant="outlined"
           label="Title"
           fullWidth
           value={postData.title}
-          onChange={(e) => setPostData({ ...postData, title: e.target.value })}
+          onChange={(e) => {
+            dispatch(changePostInputError(false));
+            dispatch(changePostData({ ...postData, title: e.target.value }));
+          }}
+          required
+          error={inputError}
         />
         <TextField
           name="description"
@@ -48,38 +62,45 @@ const Form = () => {
           maxRows={5}
           value={postData.description}
           onChange={(e) =>
-            setPostData({ ...postData, description: e.target.value })
+            dispatch(
+              changePostData({ ...postData, description: e.target.value })
+            )
           }
         />
         <TextField
           name="tags"
           variant="outlined"
-          label="Tags"
+          label="Tags (comma separated)"
           fullWidth
           value={postData.tags}
-          onChange={(e) => setPostData({ ...postData, tags: e.target.value })}
+          onChange={(e) => {
+            dispatch(changePostData({ ...postData, tags: e.target.value }));
+          }}
         />
         <div className={classes.fileInput}>
           <FileBase
             type="file"
             multiple={false}
             onDone={({ base64 }) =>
-              setPostData({ ...postData, selectedFile: base64 })
+              dispatch(changePostData({ ...postData, selectedFile: base64 }))
             }
           />
         </div>
         <Button
-          type="submit"
+          type={user ? "submit" : "button"}
           variant="contained"
           className={classes.buttonSubmit}
           color="primary"
           size="large"
           fullWidth
+          onClick={() => {
+            if (!user) navigate("/auth");
+          }}
         >
-          Submit
+          {user ? "Submit" : "Sign in to submit"}
         </Button>
         <Button
-          onClick={clear}
+          onClick={() => dispatch(clearCurrentPost())}
           variant="contained"
           color="secondary"
           size="small"

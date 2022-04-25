@@ -1,45 +1,29 @@
-import { Container, AppBar, Typography, Grow, Grid } from "@material-ui/core";
-import { useDispatch } from 'react-redux';
+import React from "react";
+import { useSelector } from "react-redux";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Container } from "@material-ui/core";
 
-import { getPosts } from './actions/postsAction';
-import Posts from "./components/Posts/Posts";
-import Form from "./components/Form/Form";
-import useStyles from "./styles";
-import { useEffect } from "react";
+import Navbar from "./components/Navbar/Navbar";
+import Home from "./components/Home/Home";
+import Auth from "./components/Auth/Auth";
+import DialogSlide from "./components/Feedback/DialogSlide";
+import SnackbarSlide from "./components/Feedback/SnackbarSlide";
 
 const App = () => {
-  const classes = useStyles();
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(getPosts());
-  }, [dispatch]);
+  const user = useSelector(state => state.user);
 
   return (
-    <Container>
-      <AppBar className={classes.appBar} position="static" color="inherit">
-        <Typography className={classes.heading} variant="h1" align="center">
-          Gamories
-        </Typography>
-      </AppBar>
-      <Grow in>
-        <Container maxWidth="lg">
-          <Grid
-            container
-            justifyContent="space-between"
-            alignItems="stretch"
-            spacing={3}
-          >
-            <Grid item xs={12} sm={7}>
-              <Posts />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <Form />
-            </Grid>
-          </Grid>
-        </Container>
-      </Grow>
-    </Container>
+    <BrowserRouter>
+      <Container maxWidth="xl">
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home/>} />
+          <Route path="/auth" element={!user ? <Auth /> : <Navigate replace to="/" />} />
+        </Routes>
+        <DialogSlide />
+        <SnackbarSlide />
+      </Container>
+    </BrowserRouter>
   );
 };
 
