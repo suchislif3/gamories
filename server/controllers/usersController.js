@@ -83,7 +83,7 @@ const createNewUser = async (name, email, password) => {
 };
 
 const createNewToken = (userData) => {
-  const tokenPayload = { email: userData.email, userId: userData._id };
+  const tokenPayload = { name: userData.name, email: userData.email, userId: userData._id };
   const secret = process.env.ACCESS_TOKEN_SECRET;
   const accessToken = jwt.sign(tokenPayload, secret, { expiresIn: "1h" });
   return accessToken;
