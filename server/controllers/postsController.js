@@ -1,11 +1,10 @@
 import mongoose from "mongoose";
 import Post from "../models/post.js";
-import User from "../models/user.js";
 
 export const postsController = {
   async get(req, res) {
     try {
-      const data = await Post.find({}, { authorId: 0 });
+      const data = await Post.find();
       res.status(200).json(data);
     } catch (err) {
       res.status(err.status || 500).json({ message: err.message });
@@ -14,16 +13,21 @@ export const postsController = {
 
   async post(req, res) {
     const post = req.body;
-    const userId = req.headers.user.userId;
+    if (post.tags) post["tags"] = convertTagsIntoArray(post.tags);
+
     try {
-      const userData = await User.findOne({ _id: userId });
       const newPost = new Post({
         ...post,
-        author: userData.name,
-        authorId: userId,
+        author: req.headers.user.name,
+        authorId: req.headers.user.userId,
       });
       await newPost.save();
-      res.status(200).json(newPost);
+      res
+        .status(200)
+        .json({
+          message: `Creating gamory '${post?.title}' successful.`,
+          post: newPost,
+        });
     } catch (err) {
       res.status(err.status || 500).json({ message: err.message });
     }
@@ -31,6 +35,9 @@ export const postsController = {
 
   async patch(req, res) {
     const post = req.body;
+    if (post.tags && typeof post.tags === "string") {
+      post["tags"] = convertTagsIntoArray(post.tags);
+    }
     const { id } = req.params;
     const userId = req.headers.user.userId;
     try {
@@ -39,7 +46,12 @@ export const postsController = {
       const updatedPost = await Post.findByIdAndUpdate(id, post, {
         new: true,
       });
-      res.status(200).json(updatedPost);
+      res
+        .status(200)
+        .json({
+          message: `Updating gamory '${post?.title}' successful.`,
+          post: updatedPost,
+        });
     } catch (err) {
       res.status(err.status || 500).json({ message: err.message });
     }
@@ -53,7 +65,7 @@ export const postsController = {
       await checkForPermissionOnPost(id, userId);
       const deletedPost = await Post.findByIdAndRemove(id);
       res.status(200).json({
-        message: `Post '${deletedPost.title}' successfully deleted.`,
+        message: `Deleting gamory '${deletedPost.title}' successful.`,
       });
     } catch (err) {
       res.status(err.status || 500).json({ message: err.message });
@@ -82,10 +94,10 @@ export const postsController = {
 
 const isIdValid = async (id) => {
   if (!mongoose.Types.ObjectId.isValid(id))
-    throw { status: 400, message: "Update failed, invalid id" };
+    throw { status: 400, message: "Update failed, invalid id." };
 
   if (!(await Post.findById(id)))
-    throw { status: 400, message: "Update failed, post does not exist" };
+    throw { status: 400, message: "Update failed, gamory does not exist." };
 };
 
 const checkForPermissionOnPost = async (id, userId) => {
@@ -96,4 +108,8 @@ const checkForPermissionOnPost = async (id, userId) => {
       message: "No permission to perform any operation on this post.",
     };
   return;
+};
+
+const convertTagsIntoArray = (string) => {
+  return string.replace(/\s+/g, "").split(",");
 };
