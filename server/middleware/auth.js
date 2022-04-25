@@ -19,9 +19,9 @@ export default (req, res, next) => {
       : jwt.decode(token);
 
     req.headers.user = {
+      name: decodedData.name,
       userId: isCustomAuth ? decodedData.userId : decodedData.sub,
     };
-    
     next();
   } catch (err) {
     res.status(401).json({
