@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Container, Grow, Grid } from "@material-ui/core";
 
 import { getPosts } from "../../actions/postsAction";
@@ -9,12 +9,11 @@ import useStyles from "./styles";
 
 const Home = () => {
   const classes = useStyles();
-  const currentPostId = useSelector((state) => state.currentPost.id);
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(getPosts());
-  }, [dispatch, currentPostId]);
+  }, [dispatch]);
 
   return (
     <Grow in>
@@ -26,11 +25,11 @@ const Home = () => {
           alignItems="stretch"
           spacing={3}
         >
-          <Grid item xs={12} sm={7}>
+          <Grid item sm={12} md={8}>
             <Posts />
           </Grid>
-          <Grid item xs={12} sm={4}>
-            <Form />
+          <Grid item sm={6} md={4}>
+            <Form isEdit />
           </Grid>
         </Grid>
       </Container>

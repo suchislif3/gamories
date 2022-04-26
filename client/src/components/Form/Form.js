@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Paper, TextField, Typography } from "@material-ui/core";
@@ -5,27 +6,40 @@ import FileBase from "react-file-base64";
 
 import useStyles from "./styles";
 import { createPost, updatePost } from "../../actions/postsAction";
-import { changePostData, changePostInputError, clearCurrentPost } from "../../actions/currentPostAction";
 
-const Form = () => {
-  const classes = useStyles();
+const Form = ({ post, isEdit, setIsEdit }) => {
   const user = useSelector((state) => state.user);
-  const postId = useSelector((state) => state.currentPost.id);
-  const postData = useSelector((state) => state.currentPost.data);
-  const inputError = useSelector((state) => state.currentPost.inputError);
+  const [postId] = useState(post?._id || null);
+  const initialPostData = {
+    title: post?.title || "",
+    description: post?.description || "",
+    tags: post?.tags || "",
+    selectedFile: post?.selectedFile || "",
+  };
+  const [postData, setPostData] = useState(initialPostData);
+  const [isInputError, setIsInputError] = useState(false);
+  const classes = useStyles({ isEdit, postId });
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const clearPostData = () => {
+    setPostData(initialPostData);
+    setIsInputError(false);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!postData.title) {
-      dispatch(changePostInputError(true));
+      setIsInputError(true);
       return;
     }
-    postId
-      ? dispatch(updatePost(postId, postData))
-      : dispatch(createPost(postData));
-    dispatch(clearCurrentPost());
+    if (postId) {
+      dispatch(updatePost(postId, postData));
+      setIsEdit(false);
+    } else {
+      dispatch(createPost(postData));
+    }
+    clearPostData();
   };
 
   return (
@@ -46,11 +60,11 @@ const Form = () => {
           fullWidth
           value={postData.title}
           onChange={(e) => {
-            dispatch(changePostInputError(false));
-            dispatch(changePostData({ ...postData, title: e.target.value }));
+            setIsInputError(false);
+            setPostData({ ...postData, title: e.target.value });
           }}
           required
-          error={inputError}
+          error={isInputError}
         />
         <TextField
           name="description"
@@ -59,12 +73,10 @@ const Form = () => {
           fullWidth
           multiline
           minRows={2}
-          maxRows={5}
+          maxRows={4}
           value={postData.description}
           onChange={(e) =>
-            dispatch(
-              changePostData({ ...postData, description: e.target.value })
-            )
+            setPostData({ ...postData, description: e.target.value })
           }
         />
         <TextField
@@ -73,16 +85,14 @@ const Form = () => {
           label="Tags (comma separated)"
           fullWidth
           value={postData.tags}
-          onChange={(e) => {
-            dispatch(changePostData({ ...postData, tags: e.target.value }));
-          }}
+          onChange={(e) => setPostData({ ...postData, tags: e.target.value })}
         />
         <div className={classes.fileInput}>
           <FileBase
             type="file"
             multiple={false}
             onDone={({ base64 }) =>
-              dispatch(changePostData({ ...postData, selectedFile: base64 }))
+              setPostData({ ...postData, selectedFile: base64 })
             }
           />
         </div>
@@ -97,16 +107,16 @@ const Form = () => {
             if (!user) navigate("/auth");
           }}
         >
-          {user ? "Submit" : "Sign in to submit"}
+          {user ? (postId ? "Save" : "Submit") : "Sign in to submit"}
         </Button>
         <Button
-          onClick={() => dispatch(clearCurrentPost())}
+          onClick={postId ? () => setIsEdit(false) : () => clearPostData()}
           variant="contained"
           color="secondary"
           size="small"
           fullWidth
         >
-          Clear
+          {postId ? "Cancel" : "Clear"}
         </Button>
       </form>
     </Paper>

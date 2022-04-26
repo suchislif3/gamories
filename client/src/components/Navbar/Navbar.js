@@ -6,7 +6,6 @@ import jwtDecode from "jwt-decode";
 
 import useStyles from "./styles";
 import { logout } from "../../actions/authAction";
-import { clearCurrentPost } from "../../actions/currentPostAction";
 
 const Navbar = () => {
   const classes = useStyles();
@@ -17,7 +16,6 @@ const Navbar = () => {
 
   const handleLogout = () => {
     dispatch(logout());
-    dispatch(clearCurrentPost());
     navigate("/");
   };
 

@@ -7,27 +7,40 @@ const { dispatch } = store;
 
 const API = axios.create({ baseURL: "http://localhost:5000" });
 
-API.interceptors.request.use((req) => {
-  if (localStorage.getItem("profile")) {
-    req.headers.authorization = `Bearer ${
-      JSON.parse(localStorage.getItem("profile")).token
-    }`;
+API.interceptors.request.use(
+  (req) => {
+    if (localStorage.getItem("profile")) {
+      req.headers.authorization = `Bearer ${
+        JSON.parse(localStorage.getItem("profile")).token
+      }`;
+    }
+    return req;
+  },
+  (err) => {
+    dispatch(openSnackBar("Something went wrong. Please try again later."));
+    return Promise.reject(err);
   }
-  return req;
-});
+);
 
 API.interceptors.response.use(
   (res) => {
-    if (res.data?.message) dispatch(openSnackBar(res.data.message));
+    if (res?.data?.message) dispatch(openSnackBar(res.data.message));
     return res;
   },
   (err) => {
-    if (err.response.status === 400 && err.response.data?.message) {
+    if (err?.response?.status === 400 && err?.response?.data?.message) {
       dispatch(openSnackBar(err.response.data.message));
-    }
-    if (err.response.status === 401) {
+    } else if (err?.response?.status === 401) {
       dispatch(logout());
-      dispatch(openSnackBar(`${ err.response.data.message === "jwt expired" ? "Token expired. " : "" }Please sign in.`));
+      dispatch(
+        openSnackBar(
+          `${
+            err?.response?.data?.message === "jwt expired" ? "Token expired. " : ""
+          }Please sign in.`
+        )
+      );
+    } else {
+      dispatch(openSnackBar("Something went wrong. Please try again later."));
     }
     return Promise.reject(err);
   }

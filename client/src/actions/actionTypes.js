@@ -3,11 +3,6 @@ export const CREATE = "CREATE";
 export const UPDATE = "UPDATE";
 export const DELETE = "DELETE";
 
-export const CHANGE_CURRENT_POST_ID = "CHANGE_CURRENT_POST_ID";
-export const CHANGE_CURRENT_POST_DATA = "CHANGE_CURRENT_POST_DATA";
-export const CHANGE_CURRENT_POST_INPUTERROR = "CHANGE_CURRENT_POST_INPUTERROR";
-export const CLEAR_POST = "CLEAR_POST";
-
 export const AUTH = "AUTH";
 export const LOGOUT = "LOGOUT";
 
