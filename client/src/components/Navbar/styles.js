@@ -7,6 +7,7 @@ export default makeStyles((theme) => ({
     margin: "30px 0",
     display: "flex",
     flexDirection: "row",
+    flexWrap: "wrap",
     justifyContent: "space-between",
     alignItems: "center",
     padding: "10px 50px",
@@ -21,15 +22,27 @@ export default makeStyles((theme) => ({
   toolbar: {
     display: "flex",
     justifyContent: "flex-end",
-    width: "400px",
+    [theme.breakpoints.up("sm")]: {
+      width: "400px",
+    },
+    [theme.breakpoints.down("sm")]: {
+      width: "300px",
+    },
   },
   profile: {
     display: "flex",
     justifyContent: "space-between",
-    width: "400px",
+    alignItems: "center",
+    [theme.breakpoints.up("sm")]: {
+      width: "400px",
+    },
+    [theme.breakpoints.down("sm")]: {
+      width: "300px",
+    },
   },
   userName: {
     display: "flex",
+    textAlign: "center",
     alignItems: "center",
   },
   brandContainer: {
