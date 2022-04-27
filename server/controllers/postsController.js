@@ -11,6 +11,20 @@ export const postsController = {
     }
   },
 
+  async getBySearch(req, res) {
+    try {
+      const { searchTerm, tags } = req.query;
+      const searchTermRegExp = new RegExp(searchTerm, "i");
+
+      const data = await Post.find({
+        $or: [{ title: searchTermRegExp }, {description: searchTermRegExp}, { tags: { $in: tags.split(",") } }],
+      });
+      res.status(200).json(data);
+    } catch (err) {
+      res.status(err.status || 500).json({ message: err.message });
+    }
+  },
+
   async post(req, res) {
     const post = req.body;
     if (post.tags) post["tags"] = convertTagsIntoArray(post.tags);
@@ -22,12 +36,10 @@ export const postsController = {
         authorId: req.headers.user.userId,
       });
       await newPost.save();
-      res
-        .status(200)
-        .json({
-          message: `Creating gamory '${post?.title}' successful.`,
-          post: newPost,
-        });
+      res.status(200).json({
+        message: `Creating gamory '${post?.title}' successful.`,
+        post: newPost,
+      });
     } catch (err) {
       res.status(err.status || 500).json({ message: err.message });
     }
@@ -46,12 +58,10 @@ export const postsController = {
       const updatedPost = await Post.findByIdAndUpdate(id, post, {
         new: true,
       });
-      res
-        .status(200)
-        .json({
-          message: `Updating gamory '${post?.title}' successful.`,
-          post: updatedPost,
-        });
+      res.status(200).json({
+        message: `Updating gamory '${post?.title}' successful.`,
+        post: updatedPost,
+      });
     } catch (err) {
       res.status(err.status || 500).json({ message: err.message });
     }

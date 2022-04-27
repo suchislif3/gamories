@@ -1,15 +1,28 @@
 import * as api from "../api";
-import { FETCH_ALL, CREATE, UPDATE, DELETE } from "../actions/actionTypes";
+import { FETCH_ALL, FETCH_BY_SEARCH, CREATE, UPDATE, DELETE, START_LOADING, END_LOADING } from "../actions/actionTypes";
 
 // action creators
 export const getPosts = () => async (dispatch) => {
   try {
+    dispatch({ type: START_LOADING });
     const { data } = await api.fetchPosts();
     dispatch({ type: FETCH_ALL, payload: data });
+    dispatch({ type: END_LOADING });
   } catch (err) {
     console.log(err.message);
   }
 };
+
+export const getPostsBySearch = (searchQuery) => async (dispatch) => {
+  try {
+    dispatch({ type: START_LOADING });
+    const { data } = await api.fetchPostsBySearch(searchQuery);
+    dispatch({ type: FETCH_BY_SEARCH, payload: data });
+    dispatch({ type: END_LOADING });
+  } catch (err) {
+    console.log(err.message);
+  }
+}
 
 export const createPost = (post) => async (dispatch) => {
   try {
