@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, Paper, TextField, Typography } from "@material-ui/core";
+import { Button, Card, TextField, Typography } from "@material-ui/core";
 import FileBase from "react-file-base64";
 
 import useStyles from "./styles";
@@ -43,7 +43,7 @@ const Form = ({ post, isEdit, setIsEdit }) => {
   };
 
   return (
-    <Paper className={classes.paper}>
+    <Card className={classes.card} raised elevation={6}>
       <form
         autoComplete="off"
         noValidate
@@ -119,7 +119,7 @@ const Form = ({ post, isEdit, setIsEdit }) => {
           {postId ? "Cancel" : "Clear"}
         </Button>
       </form>
-    </Paper>
+    </Card>
   );
 };
 

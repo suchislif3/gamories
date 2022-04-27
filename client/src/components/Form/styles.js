@@ -6,7 +6,7 @@ export default makeStyles((theme) => ({
       margin: theme.spacing(1),
     },
   },
-  paper: ({ isEdit, postId }) => ({
+  card: ({ isEdit, postId }) => ({
     position: postId ? "absolute" : "static",
     padding: `${postId ? "8px" : "16px"} 16px`,
     height: postId ? "100%" : "464px",

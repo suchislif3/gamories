@@ -35,7 +35,9 @@ API.interceptors.response.use(
       dispatch(
         openSnackBar(
           `${
-            err?.response?.data?.message === "jwt expired" ? "Token expired. " : ""
+            err?.response?.data?.message === "jwt expired"
+              ? "Token expired. "
+              : ""
           }Please sign in.`
         )
       );
@@ -47,9 +49,12 @@ API.interceptors.response.use(
 );
 
 export const fetchPosts = () => API.get("/posts");
+export const fetchPostsBySearch = (searchQuery) =>
+  API.get(
+    `/posts/search?searchTerm=${searchQuery.searchTerm || "none"}&tags=${searchQuery.tags || "none"}`
+  );
 export const createPost = (newPost) => API.post("/posts", newPost);
-export const updatePost = (id, updatedPost) =>
-  API.patch(`/posts/${id}`, updatedPost);
+export const updatePost = (id, updatedPost) => API.patch(`/posts/${id}`, updatedPost);
 export const deletePost = (id) => API.delete(`/posts/${id}`);
 export const likePost = (id) => API.patch(`/posts/${id}/likepost`);
 

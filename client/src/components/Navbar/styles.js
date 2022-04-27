@@ -11,34 +11,43 @@ export default makeStyles((theme) => ({
     justifyContent: "space-between",
     alignItems: "center",
     padding: "10px 50px",
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column',
+    },
   },
   heading: {
-    color: "rgba(0,183,255, 1)",
-    textDecoration: "none",
+    color: theme.palette.primary.main,
+    textDecoration: 'none',
+    fontSize: '2em',
+    fontWeight: 300,
   },
   image: {
-    marginLeft: "15px",
+    marginLeft: "10px",
   },
   toolbar: {
     display: "flex",
     justifyContent: "flex-end",
-    [theme.breakpoints.up("sm")]: {
-      width: "400px",
-    },
+    width: "400px",
     [theme.breakpoints.down("sm")]: {
-      width: "300px",
+      width: "auto",
     },
   },
   profile: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    [theme.breakpoints.up("sm")]: {
-      width: "400px",
-    },
+    width: "400px",
     [theme.breakpoints.down("sm")]: {
-      width: "300px",
+      width: "auto",
+      marginTop: "16px",
     },
+  },
+  logout: {
+    marginLeft: "20px",
+  },
+  tagline: {
+    marginLeft: "20px",
+    marginTop: "20px",
   },
   userName: {
     display: "flex",
@@ -48,9 +57,11 @@ export default makeStyles((theme) => ({
   brandContainer: {
     display: "flex",
     alignItems: "center",
+    flexWrap: "wrap",
   },
   purple: {
     color: theme.palette.getContrastText(deepPurple[500]),
     backgroundColor: deepPurple[500],
+    marginRight: "16px",
   },
 }));

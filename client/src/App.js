@@ -6,6 +6,7 @@ import { Container } from "@material-ui/core";
 import Navbar from "./components/Navbar/Navbar";
 import Home from "./components/Home/Home";
 import Auth from "./components/Auth/Auth";
+import PostDetails from "./components/PostDetails/PostDetails";
 import DialogSlide from "./components/Feedback/DialogSlide";
 import SnackbarSlide from "./components/Feedback/SnackbarSlide";
 
@@ -17,7 +18,10 @@ const App = () => {
       <Container maxWidth="xl">
         <Navbar />
         <Routes>
-          <Route path="/" element={<Home/>} />
+          <Route path="/" element={<Navigate replace to="/posts" />} />
+          <Route path="/posts" element={<Home/>} />
+          <Route path="/posts/search" element={<Home/>} />
+          <Route path="/posts/:id" element={<PostDetails/>} />
           <Route path="/auth" element={!user ? <Auth /> : <Navigate replace to="/" />} />
         </Routes>
         <DialogSlide />

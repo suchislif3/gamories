@@ -16,7 +16,6 @@ import useStyles from "./styles";
 import Likes from "./Likes";
 import { openDialog } from "../../../../actions/feedbackAction";
 import { likePost, deletePost } from '../../../../actions/postsAction';
-import gamoriesImage from "../../../../images/gamories.jpg";
 
 const Gamory = ({post, handleEdit, isEdit}) => {
   const [isUsersPost, setIsUsersPost] = useState(false);
@@ -43,10 +42,10 @@ const Gamory = ({post, handleEdit, isEdit}) => {
   };
 
   return (
-    <Card className={classes.card} >
+    <Card className={classes.card} raised elevation={6} >
       <CardMedia
         className={classes.media}
-        image={post.selectedFile || gamoriesImage}
+        image={post.selectedFile || "https://cdn.pixabay.com/photo/2021/09/07/07/11/game-console-6603120_960_720.jpg"}
         title={post.title}
       />
       <div className={classes.overlay}>
