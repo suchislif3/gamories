@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   AppBar,
@@ -20,6 +20,7 @@ import {
   getPostsBySearch,
 } from "../../actions/postsAction";
 import { openSnackBar } from "../../actions/feedbackAction";
+import { START_LOADING } from "../../actions/actionTypes";
 
 const Home = () => {
   const classes = useStyles();
@@ -36,32 +37,20 @@ const Home = () => {
     searchParams.get("tags") ? searchParams.get("tags").split(",") : []
   );
   const [page, setPage] = useState(1);
+  const {pagesTotal} = useSelector(state => state.posts)
 
-  const fetchMorePosts = () => {
-    setPage((prevPage) => prevPage + 1);
+  const incrementPageNumber = () => {
+    if (page < pagesTotal) setPage((prevPage) => prevPage + 1);
   };
 
-  /* window.onscroll = function () {
-    if (
-      window.innerHeight + document.documentElement.scrollTop ===
-      document.documentElement.offsetHeight
-    ) {
-      console.log("most");
-      fetchMorePosts();
-    }
-  }; */
-  
   useEffect(() => {
-    console.log("PAGE", page);
     if (page !== 1) {
       dispatch(addPosts(page));
-      console.log("ADD POSTS USE EFFECT");
     }
   }, [dispatch, page]);
 
   useEffect(() => {
     const currentParams = Object.fromEntries([...searchParams]);
-    console.log("INITIAL USE EFFECT");
     if (!currentParams.searchTerm && !currentParams.tags) {
       setPage(1);
       dispatch(getPosts());
@@ -72,6 +61,9 @@ const Home = () => {
           tags: currentParams.tags,
         })
       );
+    }
+    return() => {
+      dispatch({ type: START_LOADING })
     }
   }, [dispatch, searchParams]);
 
@@ -126,7 +118,7 @@ const Home = () => {
           spacing={3}
         >
           <Grid item xs={12} sm={12} md={8}>
-            <Posts fetchData={fetchMorePosts} currentParams={Object.fromEntries([...searchParams])} />
+            <Posts incrementPageNumber={incrementPageNumber} currentParams={Object.fromEntries([...searchParams])} />
           </Grid>
           <Grid item xs={12} sm={8} md={4} lg={3}>
             <AppBar

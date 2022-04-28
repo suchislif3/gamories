@@ -20,7 +20,13 @@ const postsReducer = (state = initialState, action) => {
     case FETCH_INITIAL:
       return { ...state, ...action.payload };
     case FETCH_PAGE:
-      return { ...state, data: [...state.data, ...action.payload.data], currentPage: action.payload.currentPage};
+      return {
+        ...state,
+        data: [...state.data, ...action.payload.data],
+        currentPage: action.payload.currentPage,
+        pagesTotal: action.payload.pagesTotal,
+        postsTotal: action.payload.postsTotal,
+      };
     case FETCH_BY_SEARCH:
       return { ...state, data: action.payload };
     case CREATE:

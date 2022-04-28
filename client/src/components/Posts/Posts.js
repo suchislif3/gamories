@@ -6,7 +6,7 @@ import useStyles from "./styles";
 import Brand from "../Brand/Brand";
 import { useEffect, useState } from "react";
 
-const Posts = ({ fetchData, currentParams }) => {
+const Posts = ({ incrementPageNumber, currentParams }) => {
   const {
     isLoading,
     data: posts,
@@ -14,10 +14,9 @@ const Posts = ({ fetchData, currentParams }) => {
     currentPage,
   } = useSelector((state) => state.posts);
   const classes = useStyles();
-  const [hasMore, setHasMore] = useState(false)
+  const [hasMore, setHasMore] = useState(false);
 
   useEffect(() => {
-    console.log(currentParams.searchTerm);
     if (currentParams.searchTerm || currentParams.tags) {
       setHasMore(false);
     } else {
@@ -33,7 +32,7 @@ const Posts = ({ fetchData, currentParams }) => {
   ) : (
     <InfiniteScroll
       dataLength={posts.length}
-      next={fetchData}
+      next={incrementPageNumber}
       hasMore={hasMore}
       loader={
         <CircularProgress style={{ display: "block", margin: "30px auto" }} />

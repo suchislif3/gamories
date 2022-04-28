@@ -17,7 +17,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate("/");
+    navigate("/posts");
   };
 
   useEffect(() => {

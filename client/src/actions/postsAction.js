@@ -6,7 +6,6 @@ export const getPosts = () => async (dispatch) => {
   try {
     dispatch({ type: START_LOADING });
     const { data } = await api.fetchPosts(1);
-    console.log(data);
     dispatch({ type: FETCH_INITIAL, payload: data });
     dispatch({ type: END_LOADING });
   } catch (err) {
@@ -17,7 +16,6 @@ export const getPosts = () => async (dispatch) => {
 export const addPosts = (page) => async (dispatch) => {
   try {
     const { data } = await api.fetchPosts(page);
-    console.log(data);
     dispatch({ type: FETCH_PAGE, payload: data });
   } catch (err) {
     console.log(err.message);
