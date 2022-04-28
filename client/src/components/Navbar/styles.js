@@ -21,9 +21,6 @@ export default makeStyles((theme) => ({
     fontSize: '2em',
     fontWeight: 300,
   },
-  image: {
-    marginLeft: "10px",
-  },
   toolbar: {
     display: "flex",
     justifyContent: "flex-end",
@@ -45,19 +42,10 @@ export default makeStyles((theme) => ({
   logout: {
     marginLeft: "20px",
   },
-  tagline: {
-    marginLeft: "20px",
-    marginTop: "20px",
-  },
   userName: {
     display: "flex",
     textAlign: "center",
     alignItems: "center",
-  },
-  brandContainer: {
-    display: "flex",
-    alignItems: "center",
-    flexWrap: "wrap",
   },
   purple: {
     color: theme.palette.getContrastText(deepPurple[500]),

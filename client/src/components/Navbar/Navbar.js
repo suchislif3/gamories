@@ -4,9 +4,7 @@ import { AppBar, Avatar, Button, Toolbar, Typography } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import jwtDecode from "jwt-decode";
 
-import gamoriesLogo from "../../images/gamories_logo.png";
-import gamoriesText from "../../images/gamories_text.png";
-import gamoriesTagline from "../../images/gamories_tagline.png";
+import Brand from "../Brand/Brand"
 import useStyles from "./styles";
 import { logout } from "../../actions/authAction";
 
@@ -34,10 +32,8 @@ const Navbar = () => {
 
   return (
     <AppBar className={classes.appBar} position="static" color="inherit">
-      <Link to="/" className={classes.brandContainer}>
-        <img src={gamoriesText} alt="gamories icon" height="45px" />
-        <img className={classes.image} src={gamoriesLogo} alt="gamories logo" height="40px" />
-        <img className={classes.tagline} src={gamoriesTagline} alt="gamories tagline" height="20px" />
+      <Link to="/">
+        <Brand tagline />
       </Link>
       <Toolbar className={classes.toolbar}>
         {user ? (

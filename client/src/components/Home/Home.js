@@ -14,7 +14,11 @@ import ChipInput from "material-ui-chip-input";
 import Posts from "../Posts/Posts";
 import Form from "../Form/Form";
 import useStyles from "./styles";
-import { getPosts, getPostsBySearch } from "../../actions/postsAction";
+import {
+  getPosts,
+  addPosts,
+  getPostsBySearch,
+} from "../../actions/postsAction";
 import { openSnackBar } from "../../actions/feedbackAction";
 
 const Home = () => {
@@ -25,15 +29,41 @@ const Home = () => {
 
   const [chipInputValue, setChipInputValue] = useState("");
   const [isChipError, setIsChipError] = useState(false);
-  const [searchTerm, setSearchTerm] = useState(searchParams.get("searchTerm") || "");
+  const [searchTerm, setSearchTerm] = useState(
+    searchParams.get("searchTerm") || ""
+  );
   const [tags, setTags] = useState(
     searchParams.get("tags") ? searchParams.get("tags").split(",") : []
   );
+  const [page, setPage] = useState(1);
+
+  const fetchMorePosts = () => {
+    setPage((prevPage) => prevPage + 1);
+  };
+
+  /* window.onscroll = function () {
+    if (
+      window.innerHeight + document.documentElement.scrollTop ===
+      document.documentElement.offsetHeight
+    ) {
+      console.log("most");
+      fetchMorePosts();
+    }
+  }; */
+  
+  useEffect(() => {
+    console.log("PAGE", page);
+    if (page !== 1) {
+      dispatch(addPosts(page));
+      console.log("ADD POSTS USE EFFECT");
+    }
+  }, [dispatch, page]);
 
   useEffect(() => {
     const currentParams = Object.fromEntries([...searchParams]);
-
+    console.log("INITIAL USE EFFECT");
     if (!currentParams.searchTerm && !currentParams.tags) {
+      setPage(1);
       dispatch(getPosts());
     } else {
       dispatch(
@@ -46,9 +76,13 @@ const Home = () => {
   }, [dispatch, searchParams]);
 
   const searchPost = () => {
-    navigate(
-      `/posts/search?searchTerm=${searchTerm || ""}&tags=${tags.join(",")}`
-    );
+    if (searchTerm === "" && tags.length === 0) {
+      navigate("/posts");
+    } else {
+      navigate(
+        `/posts/search?searchTerm=${searchTerm || ""}&tags=${tags.join(",")}`
+      );
+    }
   };
 
   const handleKeyDown = (e) => {
@@ -92,7 +126,7 @@ const Home = () => {
           spacing={3}
         >
           <Grid item xs={12} sm={12} md={8}>
-            <Posts />
+            <Posts fetchData={fetchMorePosts} currentParams={Object.fromEntries([...searchParams])} />
           </Grid>
           <Grid item xs={12} sm={8} md={4} lg={3}>
             <AppBar

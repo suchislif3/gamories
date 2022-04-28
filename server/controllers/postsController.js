@@ -3,9 +3,14 @@ import Post from "../models/post.js";
 
 export const postsController = {
   async get(req, res) {
+    const {page} = req.query;
     try {
-      const data = await Post.find();
-      res.status(200).json(data);
+      const LIMIT = 6;
+      const startingPostIndex = (Number(page) - 1) * LIMIT;
+      const postsTotal = await Post.countDocuments({});
+      const pagesTotal = Math.ceil(postsTotal / LIMIT);
+      const posts = await Post.find().sort({createdAt: -1}).limit(LIMIT).skip(startingPostIndex);
+      res.status(200).json({data: posts, currentPage: page, pagesTotal, postsTotal });
     } catch (err) {
       res.status(err.status || 500).json({ message: err.message });
     }
