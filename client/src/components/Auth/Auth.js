@@ -30,6 +30,12 @@ const Auth = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isSignup, setIsSignUp] = useState(false);
   const [formData, setFormData] = useState(initialFormData);
+  const [isInputError, setIsInputError] = useState({
+    name: false,
+    email: false,
+    password: false,
+    confirmPassword: false,
+  });
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -38,7 +44,22 @@ const Auth = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
+    if (isSignup && !formData.name) {
+      setIsInputError(prev => ({...prev, name: true}));
+      return;
+    };
+    if (!formData.email) {
+      setIsInputError(prev => ({...prev, email: true}));
+      return;
+    }
+    if (!formData.password) {
+      setIsInputError(prev => ({...prev, password: true}));
+      return;
+    }
+    if (isSignup && !formData.confirmPassword) {
+      setIsInputError(prev => ({...prev, confirmPassword: true}));
+      return;
+    }
     if (isSignup) {
       dispatch(signup(formData, navigate));
     } else {
@@ -47,7 +68,8 @@ const Auth = () => {
   };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData(prevData => ({ ...prevData, [e.target.name]: e.target.value }));
+    setIsInputError(prevData => ({ ...prevData, [e.target.name]: false }));
   };
 
   const switchMode = () => {
@@ -90,6 +112,7 @@ const Auth = () => {
                     label="Name"
                     handleChange={handleChange}
                     autoFocus={isSignup ? true : false}
+                    error={isInputError.name}
                   />
                 </>
               )}
@@ -99,6 +122,7 @@ const Auth = () => {
                 handleChange={handleChange}
                 autoFocus={isSignup ? false : true}
                 type="email"
+                error={isInputError.email}
               />
               <Input
                 name="password"
@@ -106,6 +130,7 @@ const Auth = () => {
                 handleChange={handleChange}
                 type={showPassword ? "text" : "password"}
                 handleShowPassword={handleShowPassword}
+                error={isInputError.password}
               />
               {isSignup && (
                 <Input
@@ -113,6 +138,7 @@ const Auth = () => {
                   label="Confirm Password"
                   handleChange={handleChange}
                   type="password"
+                  error={isInputError.confirmPassword}
                 />
               )}
             </Grid>
