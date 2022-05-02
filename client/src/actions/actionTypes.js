@@ -1,9 +1,10 @@
 export const FETCH_INITIAL = "FETCH_INITIAL";
-export const FETCH_PAGE = "FETCH_PAGE";
+export const FETCH_MORE = "FETCH_MORE";
 export const FETCH_BY_SEARCH = "FETCH_BY_SEARCH";
 export const CREATE = "CREATE";
 export const UPDATE = "UPDATE";
 export const DELETE = "DELETE";
+export const CHANGE_HASMORE = "CHANGE_HASMORE";
 
 export const START_LOADING = "START_LOADING";
 export const END_LOADING = "END_LOADING";

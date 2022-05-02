@@ -1,15 +1,16 @@
 import {
   FETCH_INITIAL,
-  FETCH_PAGE,
+  FETCH_MORE,
   FETCH_BY_SEARCH,
   CREATE,
   UPDATE,
   DELETE,
   START_LOADING,
   END_LOADING,
+  CHANGE_HASMORE,
 } from "../actions/actionTypes";
 
-const initialState = { isLoading: true, data: [] };
+const initialState = { isLoading: true, hasMore: true, data: [] };
 
 const postsReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -18,17 +19,13 @@ const postsReducer = (state = initialState, action) => {
     case END_LOADING:
       return { ...state, isLoading: false };
     case FETCH_INITIAL:
-      return { ...state, ...action.payload };
-    case FETCH_PAGE:
-      return {
-        ...state,
-        data: [...state.data, ...action.payload.data],
-        currentPage: action.payload.currentPage,
-        pagesTotal: action.payload.pagesTotal,
-        postsTotal: action.payload.postsTotal,
-      };
     case FETCH_BY_SEARCH:
       return { ...state, data: action.payload };
+    case FETCH_MORE:
+      return {
+        ...state,
+        data: [...state.data, ...action.payload],
+      };
     case CREATE:
       return { ...state, data: [action.payload, ...state.data] };
     case UPDATE:
@@ -43,6 +40,8 @@ const postsReducer = (state = initialState, action) => {
         ...state,
         data: state.data.filter((post) => post._id !== action.payload),
       };
+    case CHANGE_HASMORE:
+      return { ...state, hasMore: action.payload };
     default:
       return state;
   }
