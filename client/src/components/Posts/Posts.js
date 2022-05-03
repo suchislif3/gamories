@@ -43,7 +43,6 @@ const Posts = () => {
         document.documentElement.clientHeight
       );
 
-      console.log(window.innerHeight, scrollHeight)
       if (window.innerHeight >= scrollHeight) {
         loadMorePosts()
       }
