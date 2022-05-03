@@ -6,7 +6,7 @@ import { Container } from "@material-ui/core";
 import Navbar from "./components/Navbar/Navbar";
 import Home from "./components/Home/Home";
 import Auth from "./components/Auth/Auth";
-import PostDetails from "./components/PostDetails/PostDetails";
+import PostDetails from "./components/Posts/PostDetails/PostDetails";
 import DialogSlide from "./components/Feedback/DialogSlide";
 import SnackbarSlide from "./components/Feedback/SnackbarSlide";
 

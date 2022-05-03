@@ -15,6 +15,16 @@ export const postsController = {
     }
   },
 
+  async getById(req, res) {
+    const { id } = req.params;
+    try {
+      const data = await Post.findById(id)
+      res.status(200).json(data);
+    } catch (err) {
+      res.status(err.status || 500).json({ message: err.message });
+    }
+  },
+
   async getBySearch(req, res) {
     try {
       const { searchTerm, tags } = req.query;

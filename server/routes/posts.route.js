@@ -8,6 +8,7 @@ const router = express.Router();
 
 router.get("/", postsController.get);
 router.get("/search", postsController.getBySearch);
+router.get("/:id", postsController.getById);
 
 //router.use(auth);
 router.post("/", auth, postsController.post);

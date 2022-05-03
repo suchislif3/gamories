@@ -34,6 +34,13 @@ const Home = () => {
   );
 
   useEffect(() => {
+    setSearchTerm(searchParams.get("searchTerm") || "");
+    setTags(
+      searchParams.get("tags") ? searchParams.get("tags").split(",") : []
+    );
+  }, [searchParams]);
+
+  useEffect(() => {
     const currentParams = Object.fromEntries([...searchParams]);
     if (!currentParams.searchTerm && !currentParams.tags) {
       dispatch(getPosts());
@@ -144,7 +151,7 @@ const Home = () => {
                 Search
               </Button>
             </AppBar>
-            <Form isEdit />
+            <Form isEdit fixedHeight />
           </Grid>
         </Grid>
       </Container>

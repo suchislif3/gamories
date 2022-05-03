@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, Link } from "react-router-dom";
 import {
   Card,
   CardActions,
@@ -13,15 +14,17 @@ import Edit from "@material-ui/icons/Edit";
 import moment from "moment";
 
 import useStyles from "./styles";
-import Likes from "./Likes";
+import Likes from "../../Likes/Likes";
 import { openDialog } from "../../../../actions/feedbackAction";
-import { likePost, deletePost } from '../../../../actions/postsAction';
+import { likePost, deletePost } from "../../../../actions/postsAction";
+import { backupImageSrc } from "../../../../constants/constants";
 
-const Gamory = ({post, handleEdit, isEdit}) => {
+const Gamory = ({ post, handleEdit, isEdit }) => {
   const [isUsersPost, setIsUsersPost] = useState(false);
   const user = useSelector((state) => state.user);
-  const classes = useStyles({isEdit});
+  const classes = useStyles({ isEdit });
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     setIsUsersPost(
@@ -41,12 +44,17 @@ const Gamory = ({post, handleEdit, isEdit}) => {
     );
   };
 
+  const openPost = () => {
+    navigate(`/posts/${post._id}`);
+  };
+
   return (
-    <Card className={classes.card} raised elevation={6} >
+    <Card className={classes.card} raised elevation={6}>
       <CardMedia
         className={classes.media}
-        image={post.selectedFile || "https://cdn.pixabay.com/photo/2021/09/07/07/11/game-console-6603120_960_720.jpg"}
+        image={post.selectedFile || backupImageSrc}
         title={post.title}
+        onClick={openPost}
       />
       <div className={classes.overlay}>
         <Typography variant="h6">{post.author}</Typography>
@@ -68,7 +76,14 @@ const Gamory = ({post, handleEdit, isEdit}) => {
       )}
       <div className={classes.details}>
         <Typography variant="body2" color="textSecondary">
-          {post.tags[0] !== "" && post.tags.map((tag) => `#${tag} `)}
+          {post.tags[0] !== "" &&
+            post.tags.map((tag, i) => (
+              <span key={i}>
+                <Link key={i} to={`/posts/search?searchTerm=&tags=${tag}`}>
+                  #{tag}
+                </Link>{" "}
+              </span>
+            ))}
         </Typography>
       </div>
       <CardContent>
@@ -83,9 +98,7 @@ const Gamory = ({post, handleEdit, isEdit}) => {
         <Button
           size="small"
           color="primary"
-          onClick={() =>
-            dispatch(likePost(post._id))
-          }
+          onClick={() => dispatch(likePost(post._id))}
         >
           <Likes post={post} />
         </Button>
@@ -102,7 +115,7 @@ const Gamory = ({post, handleEdit, isEdit}) => {
         )}
       </CardActions>
     </Card>
-  )
-}
+  );
+};
 
 export default Gamory;

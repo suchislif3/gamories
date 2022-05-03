@@ -1,3 +1,4 @@
+export const FETCH_BY_ID = "FETCH_BY_ID";
 export const FETCH_INITIAL = "FETCH_INITIAL";
 export const FETCH_MORE = "FETCH_MORE";
 export const FETCH_BY_SEARCH = "FETCH_BY_SEARCH";
