@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
 import { Grid, CircularProgress, Typography } from "@material-ui/core";
@@ -28,9 +28,27 @@ const Posts = () => {
     }
   }, [dispatch, searchParams]);
 
-  const loadMorePosts = () => {
+  const loadMorePosts = useCallback(() => {
     dispatch(addPosts(posts[posts.length - 1]._id));
-  };
+  }, [dispatch, posts]);
+
+  useEffect(() => {
+    if (!isLoading && posts.length > 0 && hasMore) {
+      const scrollHeight = Math.max(
+        document.body.scrollHeight,
+        document.documentElement.scrollHeight,
+        document.body.offsetHeight,
+        document.documentElement.offsetHeight,
+        document.body.clientHeight,
+        document.documentElement.clientHeight
+      );
+
+      console.log(window.innerHeight, scrollHeight)
+      if (window.innerHeight >= scrollHeight) {
+        loadMorePosts()
+      }
+    }
+  }, [isLoading, posts, hasMore, loadMorePosts]);
 
   if (!posts?.length && !isLoading)
     return <Typography variant="body1">No gamories found.</Typography>;
