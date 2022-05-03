@@ -37,7 +37,7 @@ const Form = ({ post, setIsEdit, absolutPosition, fixedHeight }) => {
       dispatch(updatePost(postId, postData));
       setIsEdit(false);
     } else {
-      dispatch(createPost(postData));
+      dispatch(createPost(postData, navigate));
     }
     clearPostData();
   };
