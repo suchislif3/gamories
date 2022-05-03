@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   AppBar,
@@ -14,7 +14,11 @@ import ChipInput from "material-ui-chip-input";
 import Posts from "../Posts/Posts";
 import Form from "../Form/Form";
 import useStyles from "./styles";
-import { getPosts, getPostsBySearch } from "../../actions/postsAction";
+import {
+  getPosts,
+  addPosts,
+  getPostsBySearch,
+} from "../../actions/postsAction";
 import { openSnackBar } from "../../actions/feedbackAction";
 import { START_LOADING } from "../../actions/actionTypes";
 
@@ -32,18 +36,25 @@ const Home = () => {
   const [tags, setTags] = useState(
     searchParams.get("tags") ? searchParams.get("tags").split(",") : []
   );
+  const { hasMore, data: posts } = useSelector((state) => state.posts);
 
+  useEffect(() => {
+    if (posts.length > 0 && hasMore) {
+      const scrollHeight = Math.max(
+        document.body.scrollHeight,
+        document.documentElement.scrollHeight,
+        document.body.offsetHeight,
+        document.documentElement.offsetHeight,
+        document.body.clientHeight,
+        document.documentElement.clientHeight
+      );
 
-  /* let scrollHeight = Math.max(
-    document.body.scrollHeight,
-    document.documentElement.scrollHeight,
-    document.body.offsetHeight,
-    document.documentElement.offsetHeight,
-    document.body.clientHeight,
-    document.documentElement.clientHeight
-  );
-  console.log("scrollheight", scrollHeight);
-  if (hasMore && window.innerHeight >= scrollHeight) loadMorePosts(); */
+      console.log(window.innerHeight, scrollHeight)
+      if (window.innerHeight >= scrollHeight) {
+        dispatch(addPosts(posts[posts.length - 1]._id));
+      }
+    }
+  }, [posts, hasMore, dispatch]);
 
   useEffect(() => {
     const currentParams = Object.fromEntries([...searchParams]);
