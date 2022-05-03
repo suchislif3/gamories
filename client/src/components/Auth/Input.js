@@ -11,6 +11,7 @@ const Input = ({
   autoFocus,
   type,
   handleShowPassword,
+  error,
 }) => {
   return (
     <Grid item xs={12} sm={12}>
@@ -23,6 +24,7 @@ const Input = ({
         label={label}
         autoFocus={autoFocus}
         type={type}
+        error={error}
         InputProps={
           name === "password" ? {
             endAdornment: (

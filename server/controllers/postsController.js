@@ -3,8 +3,12 @@ import Post from "../models/post.js";
 
 export const postsController = {
   async get(req, res) {
+    const { startId } = req.query;
     try {
-      const data = await Post.find();
+      const nPerPage = 6;
+      const data = await Post.find(startId ? { _id: { $lt: startId } } : {})
+        .sort({ _id: -1 })
+        .limit(nPerPage);
       res.status(200).json(data);
     } catch (err) {
       res.status(err.status || 500).json({ message: err.message });
@@ -17,8 +21,12 @@ export const postsController = {
       const searchTermRegExp = new RegExp(searchTerm, "i");
 
       const data = await Post.find({
-        $or: [{ title: searchTermRegExp }, {description: searchTermRegExp}, { tags: { $in: tags.split(",") } }],
-      });
+        $or: [
+          { title: searchTermRegExp },
+          { description: searchTermRegExp },
+          { tags: { $in: tags.split(",") } },
+        ],
+      }).sort({ createdAt: -1 });
       res.status(200).json(data);
     } catch (err) {
       res.status(err.status || 500).json({ message: err.message });

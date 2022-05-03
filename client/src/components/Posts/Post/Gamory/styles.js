@@ -21,8 +21,8 @@ export default makeStyles({
     height: "100%",
     minHeight: "456px",
     position: "relative",
-    transform: ({ isEdit }) => isEdit ? "rotateY(90deg)" : "rotateY(0deg)",
-    transitionDelay: ({ isEdit }) => (isEdit ? "0s" : "0.1s"),
+    opacity: ({ isEdit }) => isEdit ? "0" : "1",
+    pointerEvents: ({ isEdit }) => isEdit ? "none" : "auto",
     transition: "all ease-in 0.1s",
   },
   overlay: {

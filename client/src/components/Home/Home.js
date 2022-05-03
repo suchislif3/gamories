@@ -16,6 +16,7 @@ import Form from "../Form/Form";
 import useStyles from "./styles";
 import { getPosts, getPostsBySearch } from "../../actions/postsAction";
 import { openSnackBar } from "../../actions/feedbackAction";
+import { START_LOADING } from "../../actions/actionTypes";
 
 const Home = () => {
   const classes = useStyles();
@@ -25,14 +26,15 @@ const Home = () => {
 
   const [chipInputValue, setChipInputValue] = useState("");
   const [isChipError, setIsChipError] = useState(false);
-  const [searchTerm, setSearchTerm] = useState(searchParams.get("searchTerm") || "");
+  const [searchTerm, setSearchTerm] = useState(
+    searchParams.get("searchTerm") || ""
+  );
   const [tags, setTags] = useState(
     searchParams.get("tags") ? searchParams.get("tags").split(",") : []
   );
 
   useEffect(() => {
     const currentParams = Object.fromEntries([...searchParams]);
-
     if (!currentParams.searchTerm && !currentParams.tags) {
       dispatch(getPosts());
     } else {
@@ -43,12 +45,19 @@ const Home = () => {
         })
       );
     }
+    return () => {
+      dispatch({ type: START_LOADING });
+    };
   }, [dispatch, searchParams]);
 
   const searchPost = () => {
-    navigate(
-      `/posts/search?searchTerm=${searchTerm || ""}&tags=${tags.join(",")}`
-    );
+    if (searchTerm === "" && tags.length === 0) {
+      navigate("/posts");
+    } else {
+      navigate(
+        `/posts/search?searchTerm=${searchTerm || ""}&tags=${tags.join(",")}`
+      );
+    }
   };
 
   const handleKeyDown = (e) => {

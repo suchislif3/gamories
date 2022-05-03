@@ -7,7 +7,7 @@ import FileBase from "react-file-base64";
 import useStyles from "./styles";
 import { createPost, updatePost } from "../../actions/postsAction";
 
-const Form = ({ post, isEdit, setIsEdit }) => {
+const Form = ({ post, setIsEdit }) => {
   const user = useSelector((state) => state.user);
   const [postId] = useState(post?._id || null);
   const initialPostData = {
@@ -18,7 +18,7 @@ const Form = ({ post, isEdit, setIsEdit }) => {
   };
   const [postData, setPostData] = useState(initialPostData);
   const [isInputError, setIsInputError] = useState(false);
-  const classes = useStyles({ isEdit, postId });
+  const classes = useStyles({ postId });
   const dispatch = useDispatch();
   const navigate = useNavigate();
 

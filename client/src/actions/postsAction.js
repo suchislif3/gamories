@@ -1,13 +1,36 @@
 import * as api from "../api";
-import { FETCH_ALL, FETCH_BY_SEARCH, CREATE, UPDATE, DELETE, START_LOADING, END_LOADING } from "../actions/actionTypes";
+import {
+  FETCH_INITIAL,
+  FETCH_MORE,
+  FETCH_BY_SEARCH,
+  CREATE,
+  UPDATE,
+  DELETE,
+  START_LOADING,
+  END_LOADING,
+  CHANGE_HASMORE,
+} from "../actions/actionTypes";
 
 // action creators
 export const getPosts = () => async (dispatch) => {
   try {
     dispatch({ type: START_LOADING });
     const { data } = await api.fetchPosts();
-    dispatch({ type: FETCH_ALL, payload: data });
+    dispatch({ type: FETCH_INITIAL, payload: data });
     dispatch({ type: END_LOADING });
+  } catch (err) {
+    console.log(err.message);
+  }
+};
+
+export const addPosts = (startId) => async (dispatch) => {
+  try {
+    const { data } = await api.fetchPosts(startId);
+    if (data.length === 0) {
+      dispatch({type: CHANGE_HASMORE, payload: false});
+    } else {
+      dispatch({ type: FETCH_MORE, payload: data });
+    }
   } catch (err) {
     console.log(err.message);
   }
@@ -22,7 +45,7 @@ export const getPostsBySearch = (searchQuery) => async (dispatch) => {
   } catch (err) {
     console.log(err.message);
   }
-}
+};
 
 export const createPost = (post) => async (dispatch) => {
   try {
@@ -58,4 +81,8 @@ export const likePost = (id) => async (dispatch) => {
   } catch (err) {
     console.log(err.message);
   }
+};
+
+export const changeHasMore = (newValue) => {
+  return { type: CHANGE_HASMORE, payload: newValue };
 };
