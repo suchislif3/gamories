@@ -41,18 +41,6 @@ const theme = {
           },
         },
       },
-      /* MuiTextField: {
-        root: {
-          "& label.Mui-focused": {
-            color: "green",
-          },
-          "& .MuiOutlinedInput-root": {
-            "&.Mui-focused fieldset": {
-              borderColor: "green",
-            },
-          },
-        },
-      }, */
     },
   }),
 };
