@@ -30,7 +30,7 @@ const App = () => {
             <Route path="/posts/:id" element={<PostDetails />} />
             <Route
               path="/auth"
-              element={!user ? <Auth /> : <Navigate replace to="/" />}
+              element={!user ? <Auth /> : <Navigate replace to={-1} />}
             />
           </Routes>
           <DialogSlide />

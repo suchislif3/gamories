@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   AppBar,
   Avatar,
@@ -21,14 +21,12 @@ import { setIsDark } from "../../actions/themeAction";
 const Navbar = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const location = useLocation();
   const user = useSelector((state) => state.user);
   const isDark = useSelector((state) => state.isDark);
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate("/posts");
   };
 
   useEffect(() => {

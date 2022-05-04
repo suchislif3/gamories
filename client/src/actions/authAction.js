@@ -5,21 +5,19 @@ export const auth = (result, token) => {
   return { type: AUTH, data: { result, token } };
 };
 
-export const signup = (formData, navigate) => async (dispatch) => {
+export const signup = (formData) => async (dispatch) => {
   try {
     const { data } = await api.signUp(formData);
     dispatch({ type: AUTH, data });
-    navigate("/");
   } catch (err) {
     console.log(err.message);
   }
 };
 
-export const signin = (formData, navigate) => async (dispatch) => {
+export const signin = (formData) => async (dispatch) => {
   try {
     const { data } = await api.signIn(formData);
     dispatch({ type: AUTH, data });
-    navigate("/");
   } catch (err) {
     console.log(err.message);
   }
