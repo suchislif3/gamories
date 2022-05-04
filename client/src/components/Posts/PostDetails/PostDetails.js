@@ -114,11 +114,12 @@ const PostDetails = () => {
             </Typography>
           </div>
           <div className={classes.subSection}>
-            <Divider style={{ margin: "20px 0 0 0" }} />
+            <Divider style={{ margin: "20px 0 10px 0" }} />
             <div className={classes.cardActions}>
               <Button
                 size="small"
                 color="primary"
+                variant="contained"
                 onClick={() => dispatch(likePost(post?._id))}
               >
                 <Likes post={post} />

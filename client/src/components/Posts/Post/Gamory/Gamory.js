@@ -98,6 +98,7 @@ const Gamory = ({ post, handleEdit, isEdit }) => {
         <Button
           size="small"
           color="primary"
+          variant="contained"
           onClick={() => dispatch(likePost(post._id))}
         >
           <Likes post={post} />

@@ -49,7 +49,7 @@ export default makeStyles({
     overflowWrap: "break-word",
   },
   cardActions: {
-    padding: "0 15px 8px 15px",
+    padding: "0 15px 15px 15px",
     display: "flex",
     justifyContent: "space-between",
   },

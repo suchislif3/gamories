@@ -62,7 +62,7 @@ const Posts = () => {
       loader={
         <CircularProgress style={{ display: "block", margin: "30px auto" }} />
       }
-      endMessage={<Brand addMarginTop addOpacity />}
+      endMessage={<Brand addMarginTop addPaddingBottom addOpacity />}
       style={{ overflow: "visible" }}
     >
       <Grid

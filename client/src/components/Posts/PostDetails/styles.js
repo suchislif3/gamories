@@ -3,18 +3,18 @@ import { makeStyles } from "@material-ui/core/styles";
 export default makeStyles((theme) => ({
   paper: {
     padding: "20px",
+    marginBottom: "30px",
     borderRadius: "15px",
   },
   media: {
     borderRadius: "20px",
-    //objectFit: "cover",
     width: "100%",
-    //maxHeight: "600px",
-    margin: "10px",
+    margin: "0 10px",
   },
   card: {
     display: "flex",
     width: "100%",
+    marginTop: "10px",
     [theme.breakpoints.down("sm")]: {
       flexDirection: "column",
     },
@@ -29,7 +29,7 @@ export default makeStyles((theme) => ({
     flexDirection: "column",
     justifyContent: "space-between",
     borderRadius: "20px",
-    margin: "10px",
+    margin: "0 10px",
     flex: 1,
   },
   subSection: {
