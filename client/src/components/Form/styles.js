@@ -1,17 +1,18 @@
 import { makeStyles } from "@material-ui/core";
 
-export default makeStyles((theme) => ({
+export default makeStyles(() => ({
   root: {
     "& .MuiTextField-root": {
-      margin: theme.spacing(1),
+      margin: `5px 0`,
     },
   },
-  card: ({ postId }) => ({
-    position: postId ? "absolute" : "static",
+  card: ({ postId, absolutPosition, fixedHeight }) => ({
+    position: absolutPosition ? "absolute" : "static",
     padding: `${postId ? "8px" : "16px"} 16px`,
-    height: postId ? "100%" : "464px",
+    height: fixedHeight ? "464px" : "100%",
     boxSizing: "border-box",
     borderRadius: "15px",
+    maxWidth: "900px",
   }),
   form: {
     display: "flex",
@@ -19,7 +20,7 @@ export default makeStyles((theme) => ({
     justifyContent: "center",
   },
   fileInput: {
-    width: "97%",
+    width: "100%",
     margin: "10px 0",
     "& input[type=file]::file-selector-button": {
       padding: ".2em .4em",

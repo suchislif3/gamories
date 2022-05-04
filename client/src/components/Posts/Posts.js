@@ -43,7 +43,6 @@ const Posts = () => {
         document.documentElement.clientHeight
       );
 
-      console.log(window.innerHeight, scrollHeight)
       if (window.innerHeight >= scrollHeight) {
         loadMorePosts()
       }
@@ -63,7 +62,7 @@ const Posts = () => {
       loader={
         <CircularProgress style={{ display: "block", margin: "30px auto" }} />
       }
-      endMessage={<Brand addMarginTop addOpacity />}
+      endMessage={<Brand addMarginTop addPaddingBottom addOpacity />}
       style={{ overflow: "visible" }}
     >
       <Grid
@@ -73,7 +72,7 @@ const Posts = () => {
         spacing={3}
       >
         {posts.map((post) => (
-          <Grid key={post._id} item xs={12} sm={8} md={8} lg={6} xl={4}>
+          <Grid key={post._id} item xs={12} sm={12} md={10} lg={6} xl={4}>
             <Post post={post} />
           </Grid>
         ))}

@@ -1,4 +1,5 @@
 import {
+  FETCH_BY_ID,
   FETCH_INITIAL,
   FETCH_MORE,
   FETCH_BY_SEARCH,
@@ -18,6 +19,8 @@ const postsReducer = (state = initialState, action) => {
       return { ...state, isLoading: true };
     case END_LOADING:
       return { ...state, isLoading: false };
+    case FETCH_BY_ID:
+      return { ...state, postById: action.payload };
     case FETCH_INITIAL:
     case FETCH_BY_SEARCH:
       return { ...state, data: action.payload };
@@ -34,6 +37,10 @@ const postsReducer = (state = initialState, action) => {
         data: state.data.map((post) =>
           post._id === action.payload._id ? action.payload : post
         ),
+        postById:
+          state.postById._id === action.payload._id
+            ? action.payload
+            : state.postById,
       };
     case DELETE:
       return {

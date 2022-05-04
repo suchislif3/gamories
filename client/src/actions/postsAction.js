@@ -1,5 +1,6 @@
 import * as api from "../api";
 import {
+  FETCH_BY_ID,
   FETCH_INITIAL,
   FETCH_MORE,
   FETCH_BY_SEARCH,
@@ -12,6 +13,22 @@ import {
 } from "../actions/actionTypes";
 
 // action creators
+
+export const getPost = (id, navigate) => async (dispatch) => {
+  try {
+    dispatch({ type: START_LOADING });
+    const { data } = await api.fetchPost(id);
+    if (!data) {
+      navigate("/posts");
+    } else {
+      dispatch({ type: FETCH_BY_ID, payload: data });
+    }
+    dispatch({ type: END_LOADING });
+  } catch (err) {
+    console.log(err.message);
+  }
+};
+
 export const getPosts = () => async (dispatch) => {
   try {
     dispatch({ type: START_LOADING });
@@ -27,7 +44,7 @@ export const addPosts = (startId) => async (dispatch) => {
   try {
     const { data } = await api.fetchPosts(startId);
     if (data.length === 0) {
-      dispatch({type: CHANGE_HASMORE, payload: false});
+      dispatch({ type: CHANGE_HASMORE, payload: false });
     } else {
       dispatch({ type: FETCH_MORE, payload: data });
     }
@@ -47,10 +64,11 @@ export const getPostsBySearch = (searchQuery) => async (dispatch) => {
   }
 };
 
-export const createPost = (post) => async (dispatch) => {
+export const createPost = (post, navigate) => async (dispatch) => {
   try {
     const { data } = await api.createPost(post);
     dispatch({ type: CREATE, payload: data.post });
+    navigate(`/posts/${data.post._id}`);
   } catch (err) {
     console.log(err.message);
   }

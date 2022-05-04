@@ -1,23 +1,32 @@
 import React, { useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { AppBar, Avatar, Button, Toolbar, Typography } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
+import { Link, useLocation } from "react-router-dom";
+import {
+  AppBar,
+  Avatar,
+  Button,
+  Switch,
+  Toolbar,
+  Typography,
+} from "@material-ui/core";
+import WbSunnyTwoToneIcon from "@material-ui/icons/WbSunnyTwoTone";
+import Brightness2TwoToneIcon from "@material-ui/icons/Brightness2TwoTone";
 import jwtDecode from "jwt-decode";
 
-import Brand from "../Brand/Brand"
 import useStyles from "./styles";
+import Brand from "../Brand/Brand";
 import { logout } from "../../actions/authAction";
+import { setIsDark } from "../../actions/themeAction";
 
 const Navbar = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const location = useLocation();
   const user = useSelector((state) => state.user);
+  const isDark = useSelector((state) => state.isDark);
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate("/posts");
   };
 
   useEffect(() => {
@@ -30,6 +39,10 @@ const Navbar = () => {
     }
   }, [dispatch, location, user?.token]);
 
+  const handleChange = () => {
+    dispatch(setIsDark(isDark ? false : true));
+  };
+
   return (
     <AppBar className={classes.appBar} position="static" color="inherit">
       <Link to="/">
@@ -39,7 +52,7 @@ const Navbar = () => {
         {user ? (
           <div className={classes.profile}>
             <Avatar
-              className={classes.purple}
+              className={classes.avatar}
               alt={user.result.name}
               src={user.result.imageUrl}
             >
@@ -69,6 +82,22 @@ const Navbar = () => {
             </Button>
           )
         )}
+        <Switch
+          checked={isDark}
+          classes={{
+            root: classes.switchRoot,
+            switchBase: classes.switchBase,
+            track: classes.switchTrack,
+            checked: classes.switchBaseChecked,
+          }}
+          onChange={handleChange}
+          color="primary"
+          name="theme-switch"
+          icon={<WbSunnyTwoToneIcon className={classes.switchLightIcon} />}
+          checkedIcon={
+            <Brightness2TwoToneIcon className={classes.switchDarkIcon} />
+          }
+        />
       </Toolbar>
     </AppBar>
   );

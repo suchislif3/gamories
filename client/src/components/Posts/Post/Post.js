@@ -28,7 +28,7 @@ const Post = ({ post }) => {
 
   return (
     <Container className={classes.postContainer}>
-      {isEdit && <Form post={post} isEdit={isEdit} setIsEdit={setIsEdit} /> }
+      {isEdit && <Form post={post} setIsEdit={setIsEdit} absolutPosition /> }
       <Gamory post={post} handleEdit={handleEdit} isEdit={isEdit} />
     </Container>
   );

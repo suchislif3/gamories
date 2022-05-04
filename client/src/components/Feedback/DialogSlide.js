@@ -47,7 +47,7 @@ const DialogSlide = () => {
         >
           {buttonAgree}
         </Button>
-        <Button onClick={() => dispatch(closeDialog())} color="primary">
+        <Button onClick={() => dispatch(closeDialog())} color="default" >
           {buttonDisagree}
         </Button>
       </DialogActions>

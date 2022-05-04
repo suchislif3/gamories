@@ -1,12 +1,13 @@
 import { makeStyles } from "@material-ui/core/styles";
 
 export default makeStyles(() => ({
-  brandContainer: ({ addMarginTop }) => ({
+  brandContainer: ({ addMarginTop, addPaddingBottom }) => ({
     display: "flex",
     alignItems: "center",
     flexWrap: "wrap",
     justifyContent: "center",
     marginTop: addMarginTop ? "50px" : "0",
+    paddingBottom: addPaddingBottom ? "50px" : "0",
   }),
   text: ({ addOpacity }) => ({
     opacity: addOpacity ? 0.3 : 1,

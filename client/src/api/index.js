@@ -48,6 +48,7 @@ API.interceptors.response.use(
   }
 );
 
+export const fetchPost = (id) => API.get(`/posts/${id}`);
 export const fetchPosts = (startId) => API.get(`/posts${startId ? "?startId="+startId : ""}`);
 export const fetchPostsBySearch = (searchQuery) =>
   API.get(
