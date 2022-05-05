@@ -21,7 +21,6 @@ const Brand = ({ tagline, addMarginTop, addPaddingBottom, addOpacity }) => {
       <img className={classes.image} src={isDark ? gamoriesLogoDark : gamoriesLogo} alt="gamories logo" />
       {tagline && (
         <img
-          className={classes.tagline}
           src={isDark ? gamoriesTaglineDark : gamoriesTagline}
           alt="gamories tagline"
         />

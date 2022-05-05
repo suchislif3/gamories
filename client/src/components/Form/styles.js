@@ -8,7 +8,7 @@ export default makeStyles(() => ({
   },
   card: ({ postId, absolutPosition, fixedHeight }) => ({
     position: absolutPosition ? "absolute" : "static",
-    padding: `${postId ? "8px" : "16px"} 16px`,
+    padding: `${postId ? "8px" : "16px"}`,
     height: fixedHeight ? "464px" : "100%",
     boxSizing: "border-box",
     borderRadius: "15px",

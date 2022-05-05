@@ -12,16 +12,18 @@ import Auth from "./components/Auth/Auth";
 import PostDetails from "./components/Posts/PostDetails/PostDetails";
 import DialogSlide from "./components/Feedback/DialogSlide";
 import SnackbarSlide from "./components/Feedback/SnackbarSlide";
+import useStyles from "./styles";
 
 const App = () => {
   const user = useSelector((state) => state.user);
   const isDark = useSelector((state) => state.isDark);
+  const classes = useStyles();
 
   return (
     <ThemeProvider theme={isDark ? theme.darkTheme : theme.lightTheme}>
       <CssBaseline />
       <BrowserRouter>
-        <Container maxWidth="xl">
+        <Container maxWidth="xl" className={classes.container}>
           <Navbar />
           <Routes>
             <Route path="/" element={<Navigate replace to="/posts" />} />

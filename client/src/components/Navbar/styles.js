@@ -4,43 +4,61 @@ export default makeStyles((theme) => ({
   appBar: {
     borderRadius: 15,
     margin: "30px 0",
-    display: "flex",
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: "10px 50px",
+    padding: "10px 40px",
     [theme.breakpoints.down("sm")]: {
+      padding: "10px",
+    },
+  },
+  outerGrid: {
+    flexWrap: "nowrap",
+    [theme.breakpoints.down("xs")]: {
       flexDirection: "column",
     },
   },
-  heading: {
-    color: theme.palette.primary.main,
-    textDecoration: "none",
-    fontSize: "2em",
-    fontWeight: 300,
+  mainGrid: {
+    flexWrap: "nowrap",
+    columnGap: "30px",
+    rowGap: "10px",
+    [theme.breakpoints.down("sm")]: {
+      flexWrap: "wrap",
+    },
+    [theme.breakpoints.down("xs")]: {
+      flexDirection: "column",
+    },
+  },
+  switchGrid: {
+    justifyContent: "flex-end",
+    alignItems: "center",
+    [theme.breakpoints.down("xs")]: {
+      justifyContent: "center",
+    },
+  },
+  brand: {
+    [theme.breakpoints.down("sm")]: {
+      maxWidth: "240px",
+    },
   },
   toolbar: {
     display: "flex",
     justifyContent: "flex-end",
-    width: "400px",
     padding: "0",
+    flexGrow: 1,
     [theme.breakpoints.down("sm")]: {
-      width: "auto",
+      justifyContent: "flex-start",
     },
   },
   profile: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    width: "400px",
+    gap: "10px",
     [theme.breakpoints.down("sm")]: {
-      width: "auto",
-      marginTop: "16px",
+      margin: "16px 0",
     },
-  },
-  logout: {
-    marginLeft: "20px",
+    [theme.breakpoints.down("xs")]: {
+      flexWrap: "wrap",
+      justifyContent: "center",
+    },
   },
   userName: {
     display: "flex",
@@ -50,13 +68,11 @@ export default makeStyles((theme) => ({
   avatar: {
     backgroundColor: theme.palette.primary.dark,
     color: theme.palette.getContrastText(theme.palette.primary.dark),
-    marginRight: "16px",
   },
 
   switchRoot: {
     width: "64px",
     padding: "10px 12px",
-    marginLeft: "40px",
   },
   switchBase: {
     width: "26px",

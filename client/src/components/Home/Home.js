@@ -99,7 +99,7 @@ const Home = () => {
 
   return (
     <Grow in>
-      <Container maxWidth={"xl"}>
+      <Container className={classes.container} maxWidth={"xl"}>
         <Grid
           className={classes.gridContainer}
           container
@@ -107,7 +107,7 @@ const Home = () => {
           alignItems="stretch"
           spacing={3}
         >
-          <Grid item xs={12} sm={12} md={8}>
+          <Grid item xs={12} sm={12} md={8} lg={9}>
             <Posts />
           </Grid>
           <Grid item xs={12} sm={8} md={4} lg={3}>

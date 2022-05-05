@@ -5,6 +5,7 @@ import {
   AppBar,
   Avatar,
   Button,
+  Grid,
   Switch,
   Toolbar,
   Typography,
@@ -45,60 +46,89 @@ const Navbar = () => {
 
   return (
     <AppBar className={classes.appBar} position="static" color="inherit">
-      <Link to="/">
-        <Brand tagline />
-      </Link>
-      <Toolbar className={classes.toolbar}>
-        {user ? (
-          <div className={classes.profile}>
-            <Avatar
-              className={classes.avatar}
-              alt={user.result.name}
-              src={user.result.imageUrl}
-            >
-              {user.result.name.charAt(0).toUpperCase()}
-            </Avatar>
-            <Typography className={classes.userName} variant="h6">
-              {user.result.name}
-            </Typography>
-            <Button
-              variant="contained"
-              className={classes.logout}
-              color="secondary"
-              onClick={handleLogout}
-            >
-              Logout
-            </Button>
+      <Grid
+        container
+        className={classes.outerGrid}
+        spacing={1}
+        alignItems="center"
+      >
+        <Grid
+          container
+          className={classes.mainGrid}
+          item
+          xs={12}
+          sm={11}
+          md={11}
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <div className={classes.brand}>
+            <Link to="/">
+              <Brand tagline />
+            </Link>
           </div>
-        ) : (
-          location.pathname !== "/auth" && (
-            <Button
-              component={Link}
-              to="/auth"
-              variant="contained"
-              color="primary"
-            >
-              Sign in
-            </Button>
-          )
-        )}
-        <Switch
-          checked={isDark}
-          classes={{
-            root: classes.switchRoot,
-            switchBase: classes.switchBase,
-            track: classes.switchTrack,
-            checked: classes.switchBaseChecked,
-          }}
-          onChange={handleChange}
-          color="primary"
-          name="theme-switch"
-          icon={<WbSunnyTwoToneIcon className={classes.switchLightIcon} />}
-          checkedIcon={
-            <Brightness2TwoToneIcon className={classes.switchDarkIcon} />
-          }
-        />
-      </Toolbar>
+          <Toolbar className={classes.toolbar}>
+            {user ? (
+              <div className={classes.profile}>
+                <Avatar
+                  className={classes.avatar}
+                  alt={user.result.name}
+                  src={user.result.imageUrl}
+                >
+                  {user.result.name.charAt(0).toUpperCase()}
+                </Avatar>
+                <Typography className={classes.userName} variant="h6">
+                  {user.result.name}
+                </Typography>
+                <Button
+                  variant="contained"
+                  className={classes.logout}
+                  color="secondary"
+                  onClick={handleLogout}
+                >
+                  Logout
+                </Button>
+              </div>
+            ) : (
+              location.pathname !== "/auth" && (
+                <Button
+                  component={Link}
+                  to="/auth"
+                  variant="contained"
+                  color="primary"
+                >
+                  Sign in
+                </Button>
+              )
+            )}
+          </Toolbar>
+        </Grid>
+        <Grid
+          container
+          className={classes.switchGrid}
+          item
+          xs={12}
+          sm={1}
+          md={1}
+        >
+          <Switch
+            checked={isDark}
+            classes={{
+              root: classes.switchRoot,
+              switchBase: classes.switchBase,
+              track: classes.switchTrack,
+              checked: classes.switchBaseChecked,
+            }}
+            onChange={handleChange}
+            color="primary"
+            name="theme-switch"
+            icon={<WbSunnyTwoToneIcon className={classes.switchLightIcon} />}
+            checkedIcon={
+              <Brightness2TwoToneIcon className={classes.switchDarkIcon} />
+            }
+          />
+        </Grid>
+      </Grid>
     </AppBar>
   );
 };
