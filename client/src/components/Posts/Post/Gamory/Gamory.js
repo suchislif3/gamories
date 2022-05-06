@@ -16,13 +16,14 @@ import moment from "moment";
 import useStyles from "./styles";
 import Likes from "../../Likes/Likes";
 import { likePost } from "../../../../actions/postsAction";
-import { backupImageSrc } from "../../../../constants/constants";
 import handleEdit from "../../../../utils/handleEdit";
 import handleDelete from "../../../../utils/handleDelete";
+import gamoriesBrand from "../../../../images/gamories_brand.png";
+import gamoriesBrandDark from "../../../../images/gamories_brand_dark.png";
 
 const Gamory = ({ post, isEdit, setIsEdit }) => {
   const [isUsersPost, setIsUsersPost] = useState(false);
-  const user = useSelector((state) => state.user);
+  const { user, isDark } = useSelector((state) => state);
   const classes = useStyles({ isEdit });
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -42,7 +43,9 @@ const Gamory = ({ post, isEdit, setIsEdit }) => {
     <Card className={classes.card} raised elevation={6}>
       <CardMedia
         className={classes.media}
-        image={post.selectedFile || backupImageSrc}
+        image={
+          post.selectedFile || (isDark ? gamoriesBrandDark : gamoriesBrand)
+        }
         title={post.title}
         onClick={openPost}
       />

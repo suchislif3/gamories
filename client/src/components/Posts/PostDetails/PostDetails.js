@@ -13,17 +13,18 @@ import Edit from "@material-ui/icons/Edit";
 import moment from "moment";
 
 import useStyles from "./styles";
-import { backupImageSrc } from "../../../constants/constants";
 import { getPost, likePost } from "../../../actions/postsAction";
 import { START_LOADING } from "../../../actions/actionTypes";
 import Likes from "../Likes/Likes";
 import Form from "../../Form/Form";
 import handleEdit from "../../../utils/handleEdit";
 import handleDelete from "../../../utils/handleDelete";
+import gamoriesBrand from "../../../images/gamories_brand.png";
+import gamoriesBrandDark from "../../../images/gamories_brand_dark.png";
 
 const PostDetails = () => {
   const { postById: post, isLoading } = useSelector((state) => state.posts);
-  const user = useSelector((state) => state.user);
+  const { user, isDark } = useSelector((state) => state);
   const [isUsersPost, setIsUsersPost] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const dispatch = useDispatch();
@@ -71,18 +72,23 @@ const PostDetails = () => {
         <div className={classes.imageSection}>
           <img
             className={classes.media}
-            src={post?.selectedFile || backupImageSrc}
+            src={
+              post?.selectedFile || (isDark ? gamoriesBrandDark : gamoriesBrand)
+            }
             alt={post?.title}
           />
         </div>
         <div className={classes.section}>
           <div className={classes.subSection}>
             <Typography gutterBottom variant="h6" color="textSecondary">
-              {post?.tags[0] !== "" && post?.tags.map((tag, i) => (<span key={i}>
-                <Link key={i} to={`/posts/search?searchTerm=&tags=${tag}`}>
-                  #{tag}
-                </Link>{" "}
-              </span>))}
+              {post?.tags[0] !== "" &&
+                post?.tags.map((tag, i) => (
+                  <span key={i}>
+                    <Link key={i} to={`/posts/search?searchTerm=&tags=${tag}`}>
+                      #{tag}
+                    </Link>{" "}
+                  </span>
+                ))}
             </Typography>
           </div>
           <div className={classes.subSection}>
