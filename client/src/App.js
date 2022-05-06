@@ -10,6 +10,7 @@ import Navbar from "./components/Navbar/Navbar";
 import Home from "./components/Home/Home";
 import Auth from "./components/Auth/Auth";
 import PostDetails from "./components/Posts/PostDetails/PostDetails";
+import NotFound from "./components/NotFound/NotFound";
 import DialogSlide from "./components/Feedback/DialogSlide";
 import SnackbarSlide from "./components/Feedback/SnackbarSlide";
 import useStyles from "./styles";
@@ -34,6 +35,7 @@ const App = () => {
               path="/auth"
               element={!user ? <Auth /> : <Navigate replace to={-1} />}
             />
+            <Route path="*" element={<NotFound />} />
           </Routes>
           <DialogSlide />
           <SnackbarSlide />
