@@ -11,17 +11,15 @@ import {
 import DeleteIcon from "@material-ui/icons/Delete";
 import Edit from "@material-ui/icons/Edit";
 import moment from "moment";
-import jwtDecode from "jwt-decode";
 
-import { logout } from "../../../actions/authAction";
-import { openSnackBar } from "../../../actions/feedbackAction";
 import useStyles from "./styles";
 import { backupImageSrc } from "../../../constants/constants";
-import { getPost, likePost, deletePost } from "../../../actions/postsAction";
+import { getPost, likePost } from "../../../actions/postsAction";
 import { START_LOADING } from "../../../actions/actionTypes";
 import Likes from "../Likes/Likes";
 import Form from "../../Form/Form";
-import { openDialog } from "../../../actions/feedbackAction";
+import handleEdit from "../../../utils/handleEdit";
+import handleDelete from "../../../utils/handleDelete";
 
 const PostDetails = () => {
   const { postById: post, isLoading } = useSelector((state) => state.posts);
@@ -47,29 +45,8 @@ const PostDetails = () => {
     };
   }, [dispatch, id, navigate]);
 
-  const handleEdit = () => {
-    const token = user?.token;
-    const decodedToken = jwtDecode(token);
-    if (decodedToken.exp * 1000 < new Date().getTime()) {
-      dispatch(logout());
-      dispatch(openSnackBar(`Token expired. Please sign in.`));
-      return;
-    }
-    setIsEdit(true);
-  };
-
-  const handleDelete = () => {
-    dispatch(
-      openDialog({
-        title: "Are you sure you want to delete?",
-        message: `Your gamory '${post.title}' will be deleted forever.`,
-        buttonAgree: "DELETE",
-        confirmAction: () =>
-          dispatch(deletePost(post._id)).then(() => navigate("/posts")),
-      })
-    );
-  };
   if (!post) return null;
+
   return isLoading ? (
     <Paper elevation={6} className={classes.loadingPaper}>
       <CircularProgress size="7em" />
@@ -129,7 +106,7 @@ const PostDetails = () => {
                   size="small"
                   color="secondary"
                   title="Delete post"
-                  onClick={handleDelete}
+                  onClick={() => handleDelete(post, () => navigate("/posts"))}
                 >
                   <DeleteIcon fontSize="small" />
                   &nbsp;Delete
@@ -140,7 +117,7 @@ const PostDetails = () => {
                   <Button
                     style={{ color: "inherit" }}
                     size="small"
-                    onClick={handleEdit}
+                    onClick={() => handleEdit(user, setIsEdit)}
                     title="Edit post"
                   >
                     <Edit fontSize="medium" />

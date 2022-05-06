@@ -15,11 +15,12 @@ import moment from "moment";
 
 import useStyles from "./styles";
 import Likes from "../../Likes/Likes";
-import { openDialog } from "../../../../actions/feedbackAction";
-import { likePost, deletePost } from "../../../../actions/postsAction";
+import { likePost } from "../../../../actions/postsAction";
 import { backupImageSrc } from "../../../../constants/constants";
+import handleEdit from "../../../../utils/handleEdit";
+import handleDelete from "../../../../utils/handleDelete";
 
-const Gamory = ({ post, handleEdit, isEdit }) => {
+const Gamory = ({ post, isEdit, setIsEdit }) => {
   const [isUsersPost, setIsUsersPost] = useState(false);
   const user = useSelector((state) => state.user);
   const classes = useStyles({ isEdit });
@@ -32,17 +33,6 @@ const Gamory = ({ post, handleEdit, isEdit }) => {
         user?.result?._id === post?.authorId
     );
   }, [post?.authorId, user]);
-
-  const handleDelete = () => {
-    dispatch(
-      openDialog({
-        title: "Are you sure you want to delete?",
-        message: `Your gamory '${post.title}' will be deleted forever.`,
-        buttonAgree: "DELETE",
-        confirmAction: () => dispatch(deletePost(post._id)),
-      })
-    );
-  };
 
   const openPost = () => {
     navigate(`/posts/${post._id}`);
@@ -67,7 +57,7 @@ const Gamory = ({ post, handleEdit, isEdit }) => {
           <Button
             style={{ color: "inherit" }}
             size="small"
-            onClick={handleEdit}
+            onClick={() => handleEdit(user, setIsEdit)}
             title="Edit post"
           >
             <Edit fontSize="medium" />
@@ -108,7 +98,7 @@ const Gamory = ({ post, handleEdit, isEdit }) => {
             size="small"
             color="secondary"
             title="Delete post"
-            onClick={handleDelete}
+            onClick={() => handleDelete(post)}
           >
             <DeleteIcon fontSize="small" />
             &nbsp;Delete

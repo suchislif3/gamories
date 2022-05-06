@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Card, TextField, Typography } from "@material-ui/core";
@@ -6,6 +6,9 @@ import FileBase from "react-file-base64";
 
 import useStyles from "./styles";
 import { createPost, updatePost } from "../../actions/postsAction";
+import { openDialog } from "../../actions/feedbackAction";
+import isTokenExpired from "../../utils/isTokenExpired";
+import handleExpiredToken from "../../utils/handleExpiredToken";
 
 const Form = ({ post, setIsEdit, absolutPosition, fixedHeight }) => {
   const user = useSelector((state) => state.user);
@@ -25,12 +28,18 @@ const Form = ({ post, setIsEdit, absolutPosition, fixedHeight }) => {
   const clearPostData = () => {
     setPostData(initialPostData);
     setIsInputError(false);
+    localStorage.removeItem("postEdit_new");
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!postData.title) {
       setIsInputError(true);
+      return;
+    }
+    if (isTokenExpired(user)) {
+      handleExpiredToken();
+      signInToSubmit();
       return;
     }
     if (postId) {
@@ -41,6 +50,46 @@ const Form = ({ post, setIsEdit, absolutPosition, fixedHeight }) => {
     }
     clearPostData();
   };
+
+  const storeFormData = useCallback(() => {
+    localStorage.setItem(
+      `postEdit_${postId || "new"}`,
+      JSON.stringify({ ...postData, selectedFile: "" })
+    );
+  }, [postData, postId]);
+
+  const signInToSubmit = () => {
+    storeFormData();
+    navigate("/auth");
+  };
+
+  const loadAndRemove = useCallback((postId) => {
+    setPostData({
+      ...JSON.parse(
+        localStorage.getItem(`postEdit_${postId ? postId : "new"}`)
+      ),
+      selectedFile: post?.selectedFile,
+    });
+    localStorage.removeItem(`postEdit_${postId ? postId : "new"}`);
+  }, [post?.selectedFile]);
+
+  useEffect(() => {
+    if (localStorage.getItem(`postEdit_${postId ? postId : "new"}`)) {
+      if (postId) {
+        dispatch(
+          openDialog({
+            title: "Do you want to load your previous edit?",
+            message: "If not, it will be deleted.",
+            buttonAgree: "YES",
+            buttonDisagree: "NO",
+            confirmAction: () => loadAndRemove(postId),
+          })
+        );
+      } else {
+        loadAndRemove();
+      }
+    }
+  }, [dispatch, loadAndRemove, postId]);
 
   return (
     <Card className={classes.card} raised elevation={6}>
@@ -104,7 +153,7 @@ const Form = ({ post, setIsEdit, absolutPosition, fixedHeight }) => {
           size="large"
           fullWidth
           onClick={() => {
-            if (!user) navigate("/auth");
+            if (!user) signInToSubmit();
           }}
         >
           {user ? (postId ? "Save" : "Submit") : "Sign in to submit"}
