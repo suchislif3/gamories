@@ -18,13 +18,10 @@ export const getPost = (id, navigate) => async (dispatch) => {
   try {
     dispatch({ type: START_LOADING });
     const { data } = await api.fetchPost(id);
-    if (!data) {
-      navigate("/posts");
-    } else {
-      dispatch({ type: FETCH_BY_ID, payload: data });
-    }
+    dispatch({ type: FETCH_BY_ID, payload: data });
     dispatch({ type: END_LOADING });
   } catch (err) {
+    navigate("/posts");
     console.log(err.message);
   }
 };
@@ -79,7 +76,7 @@ export const updatePost = (id, post) => async (dispatch) => {
     const { data } = await api.updatePost(id, post);
     dispatch({ type: UPDATE, payload: data.post });
   } catch (err) {
-    console.log(err.message);
+    console.log(err);
   }
 };
 

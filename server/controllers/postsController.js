@@ -18,7 +18,8 @@ export const postsController = {
   async getById(req, res) {
     const { id } = req.params;
     try {
-      const data = await Post.findById(id)
+      await isIdValid(id);
+      const data = await Post.findById(id);
       res.status(200).json(data);
     } catch (err) {
       res.status(err.status || 500).json({ message: err.message });
@@ -122,10 +123,10 @@ export const postsController = {
 
 const isIdValid = async (id) => {
   if (!mongoose.Types.ObjectId.isValid(id))
-    throw { status: 400, message: "Update failed, invalid id." };
+    throw { status: 400, message: "Invalid id." };
 
   if (!(await Post.findById(id)))
-    throw { status: 400, message: "Update failed, gamory does not exist." };
+    throw { status: 404, message: "Gamory does not exist." };
 };
 
 const checkForPermissionOnPost = async (id, userId) => {

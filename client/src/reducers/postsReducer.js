@@ -38,7 +38,7 @@ const postsReducer = (state = initialState, action) => {
           post._id === action.payload._id ? action.payload : post
         ),
         postById:
-          state.postById._id === action.payload._id
+          state.postById?._id === action.payload._id
             ? action.payload
             : state.postById,
       };

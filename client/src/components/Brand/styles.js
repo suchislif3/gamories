@@ -1,9 +1,10 @@
 import { makeStyles } from "@material-ui/core/styles";
 
 export default makeStyles((theme) => ({
-  brandContainer: ({ addMarginTop, addPaddingBottom }) => ({
+  brandContainer: ({ addMarginTop, addPaddingBottom, centered }) => ({
     display: "flex",
     alignItems: "flex-end",
+    justifyContent: centered ? "center" : "",
     columnGap: "20px",
     rowGap: "10px",
     flexWrap: "wrap",

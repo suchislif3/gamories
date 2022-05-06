@@ -28,7 +28,10 @@ API.interceptors.response.use(
     return res;
   },
   (err) => {
-    if (err?.response?.status === 400 && err?.response?.data?.message) {
+    if (
+      err?.response?.status === (400 || 404) &&
+      err?.response?.data?.message
+    ) {
       dispatch(openSnackBar(err.response.data.message));
     } else if (err?.response?.status === 401) {
       dispatch(logout());

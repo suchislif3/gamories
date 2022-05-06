@@ -8,8 +8,8 @@ import gamoriesTextDark from "../../images/gamories_text_dark.png";
 import gamoriesTaglineDark from "../../images/gamories_tagline_dark.png";
 import { useSelector } from "react-redux";
 
-const Brand = ({ tagline, addMarginTop, addPaddingBottom, addOpacity }) => {
-  const classes = useStyles({ addMarginTop, addPaddingBottom, addOpacity });
+const Brand = ({ tagline, addMarginTop, addPaddingBottom, addOpacity, centered }) => {
+  const classes = useStyles({ addMarginTop, addPaddingBottom, addOpacity, centered });
   const isDark = useSelector((state) => state.isDark);
   return (
     <div className={classes.brandContainer}>
