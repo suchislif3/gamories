@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Post from "../models/post.js";
+import { Comment } from "../models/comment.js";
 
 export const postsController = {
   async get(req, res) {
@@ -101,12 +102,12 @@ export const postsController = {
     }
   },
 
-  async likePost(req, res) {
+  async like(req, res) {
     const { id } = req.params;
     const userId = req.headers.user.userId;
     try {
       await isIdValid(id);
-      const post = await Post.findById(id);
+      const post = await Post.findById(id);               //itt csak a likes-ot kell kiszedni es azt objectkent visszaadni updatenel
       const index = post.likes.findIndex((id) => id === String(userId));
       if (index === -1) {
         post.likes.push(userId);
@@ -114,6 +115,27 @@ export const postsController = {
         post.likes = post.likes.filter((id) => id !== String(userId));
       }
       const updatedPost = await Post.findByIdAndUpdate(id, post, { new: true });
+      res.status(200).json(updatedPost);
+    } catch (err) {
+      res.status(err.status || 500).json({ message: err.message });
+    }
+  },
+
+  async comment(req, res) {
+    const { id } = req.params;
+    const { comment } = req.body;
+    try {
+      await isIdValid(id);
+      const commentData = new Comment({
+        author: req.headers.user.name,
+        authorId: req.headers.user.userId,
+        comment,
+      });
+      const updatedPost = await Post.findByIdAndUpdate(
+        id,
+        { $push: { comments: commentData } },
+        { new: true }
+      );
       res.status(200).json(updatedPost);
     } catch (err) {
       res.status(err.status || 500).json({ message: err.message });

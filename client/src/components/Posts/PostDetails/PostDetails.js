@@ -13,6 +13,7 @@ import Edit from "@material-ui/icons/Edit";
 import moment from "moment";
 
 import useStyles from "./styles";
+import CommentSection from "./CommentSection/CommentSection";
 import { getPost, likePost } from "../../../actions/postsAction";
 import { START_LOADING } from "../../../actions/actionTypes";
 import Likes from "../Likes/Likes";
@@ -55,86 +56,95 @@ const PostDetails = () => {
   ) : isEdit ? (
     <Form post={post} setIsEdit={setIsEdit} fixedHeight />
   ) : (
-    <Paper className={classes.paper} elevation={6}>
-      <div className={classes.section}>
-        <div className={classes.topSection}>
-          <Typography variant="h4">{post?.title}</Typography>
-          <div className={classes.subSection}>
-            <Typography variant="h6">Created by: {post?.author}</Typography>
-            <Typography variant="body2">
-              {moment(post?.createdAt).fromNow()}
-            </Typography>
-          </div>
-        </div>
-        <Divider style={{ margin: "20px 0 0" }} />
-      </div>
-      <div className={classes.card}>
-        <div className={classes.imageSection}>
-          <img
-            className={classes.media}
-            src={
-              post?.selectedFile || (isDark ? gamoriesBrandDark : gamoriesBrand)
-            }
-            alt={post?.title}
-          />
-        </div>
+    <>
+      <Paper className={classes.paper} elevation={6}>
         <div className={classes.section}>
-          <div className={classes.subSection}>
-            <Typography gutterBottom variant="h6" color="textSecondary">
-              {post?.tags[0] !== "" &&
-                post?.tags.map((tag, i) => (
-                  <span key={i}>
-                    <Link key={i} to={`/posts/search?searchTerm=&tags=${tag}`}>
-                      #{tag}
-                    </Link>{" "}
-                  </span>
-                ))}
-            </Typography>
+          <div className={classes.topSection}>
+            <Typography variant="h4">{post?.title}</Typography>
+            <div className={classes.subSection}>
+              <Typography variant="h6">Created by: {post?.author}</Typography>
+              <Typography variant="body2">
+                {moment(post?.createdAt).fromNow()}
+              </Typography>
+            </div>
           </div>
-          <div className={classes.subSection}>
-            <Typography gutterBottom variant="body1">
-              {post?.description}
-            </Typography>
-          </div>
-          <div className={classes.subSection}>
-            <Divider style={{ margin: "20px 0 10px 0" }} />
-            <div className={classes.cardActions}>
-              <Button
-                size="small"
-                color="primary"
-                variant="contained"
-                onClick={() => dispatch(likePost(post?._id))}
-              >
-                <Likes post={post} />
-              </Button>
-              {isUsersPost && (
-                <Button
-                  size="small"
-                  color="secondary"
-                  title="Delete post"
-                  onClick={() => handleDelete(post, () => navigate("/posts"))}
-                >
-                  <DeleteIcon fontSize="small" />
-                  &nbsp;Delete
-                </Button>
-              )}
-              {isUsersPost && (
-                <div className={classes.overlay2}>
+          <Divider style={{ margin: "20px 0 0" }} />
+        </div>
+        <div className={classes.mainSection}>
+          <div className={classes.gamory}>
+            <div className={classes.imageSection}>
+              <img
+                className={classes.media}
+                src={
+                  post?.selectedFile ||
+                  (isDark ? gamoriesBrandDark : gamoriesBrand)
+                }
+                alt={post?.title}
+              />
+            </div>
+            <div className={classes.section}>
+              <div className={classes.subSection}>
+                <Typography gutterBottom variant="h6" color="textSecondary">
+                  {post?.tags[0] !== "" &&
+                    post?.tags.map((tag, i) => (
+                      <span key={i}>
+                        <Link
+                          key={i}
+                          to={`/posts/search?searchTerm=&tags=${tag}`}
+                        >
+                          #{tag}
+                        </Link>{" "}
+                      </span>
+                    ))}
+                </Typography>
+              </div>
+              <div className={classes.subSection}>
+                <Typography gutterBottom variant="body1">
+                  {post?.description}
+                </Typography>
+              </div>
+              <div className={classes.subSection}>
+                <Divider style={{ margin: "20px 0 10px 0" }} />
+                <div className={classes.cardActions}>
                   <Button
-                    style={{ color: "inherit" }}
                     size="small"
-                    onClick={() => handleEdit(user, setIsEdit)}
-                    title="Edit post"
+                    color="primary"
+                    variant="contained"
+                    onClick={() => dispatch(likePost(post?._id))}
                   >
-                    <Edit fontSize="medium" />
+                    <Likes post={post} />
                   </Button>
+                  {isUsersPost && (
+                    <Button
+                      size="small"
+                      color="secondary"
+                      title="Delete post"
+                      onClick={() =>
+                        handleDelete(post, () => navigate("/posts"))
+                      }
+                    >
+                      <DeleteIcon fontSize="small" />
+                      &nbsp;Delete
+                    </Button>
+                  )}
+                  {isUsersPost && (
+                    <Button
+                      style={{ color: "inherit" }}
+                      size="small"
+                      onClick={() => handleEdit(user, setIsEdit)}
+                      title="Edit post"
+                    >
+                      <Edit fontSize="medium" />
+                    </Button>
+                  )}
                 </div>
-              )}
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </Paper>
+      </Paper>
+      <CommentSection post={post} />
+    </>
   );
 };
 

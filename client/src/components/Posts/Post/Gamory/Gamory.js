@@ -10,6 +10,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
+import ChatBubbleOutlineIcon from "@material-ui/icons/ChatBubbleOutline";
 import Edit from "@material-ui/icons/Edit";
 import moment from "moment";
 
@@ -95,6 +96,14 @@ const Gamory = ({ post, isEdit, setIsEdit }) => {
           onClick={() => dispatch(likePost(post._id))}
         >
           <Likes post={post} />
+        </Button>
+        <Button
+          size="small"
+          color="primary"
+          onClick={() => navigate(`/posts/${post._id}/#comments`)}
+        >
+          <ChatBubbleOutlineIcon />
+          <Typography variant="body1">{post.comments.length || ""}</Typography>
         </Button>
         {isUsersPost && (
           <Button

@@ -5,6 +5,7 @@ export const FETCH_BY_SEARCH = "FETCH_BY_SEARCH";
 export const CREATE = "CREATE";
 export const UPDATE = "UPDATE";
 export const DELETE = "DELETE";
+export const COMMENT = "COMMENT";
 export const CHANGE_HASMORE = "CHANGE_HASMORE";
 
 export const START_LOADING = "START_LOADING";
