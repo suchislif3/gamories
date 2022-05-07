@@ -2,14 +2,12 @@ import jwt from "jsonwebtoken";
 
 export default (req, res, next) => {
   try {
-    if (!req.headers.authorization) {
-      throw { message: "There is no authorization in the header." };
-    } else if (req.headers.authorization.split(" ").length !== 2) {
-      throw {
-        message: "The authorization format in the header is not correct.",
-      };
-    } else if (req.headers.authorization.split(" ")[0] !== "Bearer") {
-      throw { message: "The token is not Bearer." };
+    if (
+      !req.headers.authorization ||
+      req.headers.authorization.split(" ").length !== 2 ||
+      req.headers.authorization.split(" ")[0] !== "Bearer"
+    ) {
+      throw new Error();
     }
 
     const token = req.headers.authorization.split(" ")[1];
@@ -25,7 +23,7 @@ export default (req, res, next) => {
     next();
   } catch (err) {
     res.status(401).json({
-      message: err.message || "not authenticated",
+      message: err.message || "Not authenticated.",
     });
   }
 };

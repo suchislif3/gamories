@@ -6,6 +6,7 @@ import {
   CREATE,
   UPDATE,
   DELETE,
+  COMMENT,
   START_LOADING,
   END_LOADING,
   CHANGE_HASMORE,
@@ -38,7 +39,7 @@ const postsReducer = (state = initialState, action) => {
           post._id === action.payload._id ? action.payload : post
         ),
         postById:
-          state.postById._id === action.payload._id
+          state.postById?._id === action.payload._id
             ? action.payload
             : state.postById,
       };
@@ -46,6 +47,14 @@ const postsReducer = (state = initialState, action) => {
       return {
         ...state,
         data: state.data.filter((post) => post._id !== action.payload),
+      };
+    case COMMENT:
+      return {
+        ...state,
+        data: state.data.map((post) =>
+          post._id === action.payload._id ? action.payload : post
+        ),
+        postById: action.payload,
       };
     case CHANGE_HASMORE:
       return { ...state, hasMore: action.payload };

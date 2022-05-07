@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { commentSchema } from "./comment.js";
 
 const postSchema = mongoose.Schema(
   {
@@ -10,6 +11,10 @@ const postSchema = mongoose.Schema(
     selectedFile: String,
     likes: {
       type: [String],
+      default: [],
+    },
+    comments: {
+      type: [commentSchema],
       default: [],
     },
   },

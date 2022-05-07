@@ -7,6 +7,7 @@ import {
   CREATE,
   UPDATE,
   DELETE,
+  COMMENT,
   START_LOADING,
   END_LOADING,
   CHANGE_HASMORE,
@@ -18,13 +19,10 @@ export const getPost = (id, navigate) => async (dispatch) => {
   try {
     dispatch({ type: START_LOADING });
     const { data } = await api.fetchPost(id);
-    if (!data) {
-      navigate("/posts");
-    } else {
-      dispatch({ type: FETCH_BY_ID, payload: data });
-    }
+    dispatch({ type: FETCH_BY_ID, payload: data });
     dispatch({ type: END_LOADING });
   } catch (err) {
+    navigate("/posts");
     console.log(err.message);
   }
 };
@@ -79,7 +77,7 @@ export const updatePost = (id, post) => async (dispatch) => {
     const { data } = await api.updatePost(id, post);
     dispatch({ type: UPDATE, payload: data.post });
   } catch (err) {
-    console.log(err.message);
+    console.log(err);
   }
 };
 
@@ -96,6 +94,16 @@ export const likePost = (id) => async (dispatch) => {
   try {
     const { data } = await api.likePost(id);
     dispatch({ type: UPDATE, payload: data });
+  } catch (err) {
+    console.log(err.message);
+  }
+};
+
+export const commentPost = (id, comment) => async (dispatch) => {
+  try {
+    const { data } = await api.commentPost(id, comment);
+    dispatch({ type: COMMENT, payload: data });
+    return "success";
   } catch (err) {
     console.log(err.message);
   }

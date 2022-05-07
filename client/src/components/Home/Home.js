@@ -32,6 +32,7 @@ const Home = () => {
   const [tags, setTags] = useState(
     searchParams.get("tags") ? searchParams.get("tags").split(",") : []
   );
+  const [isEdit, setIsEdit] = useState(false);
 
   useEffect(() => {
     setSearchTerm(searchParams.get("searchTerm") || "");
@@ -99,7 +100,7 @@ const Home = () => {
 
   return (
     <Grow in>
-      <Container maxWidth={"xl"}>
+      <Container className={classes.container} maxWidth={"xl"}>
         <Grid
           className={classes.gridContainer}
           container
@@ -107,7 +108,7 @@ const Home = () => {
           alignItems="stretch"
           spacing={3}
         >
-          <Grid item xs={12} sm={12} md={8}>
+          <Grid item xs={12} sm={12} md={8} lg={9}>
             <Posts />
           </Grid>
           <Grid item xs={12} sm={8} md={4} lg={3}>
@@ -142,16 +143,24 @@ const Home = () => {
                 onUpdateInput={handleUpdateInput}
                 error={isChipError}
               />
-              <Button
-                onClick={searchPost}
-                className={classes.searchButton}
-                variant="contained"
-                color="primary"
-              >
+              <Button onClick={searchPost} variant="outlined" color="primary">
                 Search
               </Button>
             </AppBar>
-            <Form isEdit fixedHeight />
+            {isEdit ? (
+              <Form fixedHeight withCloseButton setIsEdit={setIsEdit} />
+            ) : (
+              <Button
+                fullWidth
+                size="large"
+                onClick={() => setIsEdit(true)}
+                variant="contained"
+                color="primary"
+                style={{ marginTop: "10px" }}
+              >
+                Share your gamory
+              </Button>
+            )}
           </Grid>
         </Grid>
       </Container>

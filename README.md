@@ -14,6 +14,7 @@ MongoDB, Express, React, Node
 - search in posts
 - search by tags
 - infinite scrolling
+- light and dark mode
 
 
 ## what was new to me / what I learned in this project?

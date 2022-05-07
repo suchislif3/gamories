@@ -6,31 +6,42 @@ export default makeStyles((theme) => ({
     marginBottom: "30px",
     borderRadius: "15px",
   },
-  media: {
-    borderRadius: "20px",
-    width: "100%",
-    margin: "0 10px",
-  },
-  card: {
-    display: "flex",
-    width: "100%",
-    marginTop: "10px",
-    [theme.breakpoints.down("sm")]: {
-      flexDirection: "column",
-    },
-  },
   topSection: {
     display: "flex",
     justifyContent: "space-between",
     flexWrap: "wrap",
+  },
+  mainSection: {
+    display: "flex",
+    flexDirection: "column",
+    rowGap: "20px",
+  },
+  gamory: {
+    display: "flex",
+    width: "100%",
+    marginTop: "10px",
+    gap: "10px",
+    [theme.breakpoints.down("sm")]: {
+      flexDirection: "column",
+    },
   },
   section: {
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
     borderRadius: "20px",
-    margin: "0 10px",
     flex: 1,
+  },
+  imageSection: {
+    flex: 2,
+    marginRight: "20px",
+    [theme.breakpoints.down("sm")]: {
+      marginRight: 0,
+    },
+  },
+  media: {
+    borderRadius: "20px",
+    maxWidth: "100%",
   },
   subSection: {
     display: "flex",
@@ -44,13 +55,7 @@ export default makeStyles((theme) => ({
     padding: "0 0 8px 0",
     display: "flex",
     justifyContent: "space-between",
-  },
-  imageSection: {
-    flex: 2,
-    marginRight: "20px",
-    [theme.breakpoints.down("sm")]: {
-      marginRight: 0,
-    },
+    alignItems: "center",
   },
   loadingPaper: {
     display: "flex",
