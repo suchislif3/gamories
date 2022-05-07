@@ -17,10 +17,10 @@ export const postsController = {
   },
 
   async getById(req, res) {
-    const { id } = req.params;
+    const { id: postId } = req.params;
     try {
-      await isIdValid(id);
-      const data = await Post.findById(id);
+      await isIdValid(postId);
+      const data = await Post.findById(postId);
       res.status(200).json(data);
     } catch (err) {
       res.status(err.status || 500).json({ message: err.message });
@@ -70,12 +70,12 @@ export const postsController = {
     if (post.tags && typeof post.tags === "string") {
       post["tags"] = convertTagsIntoArray(post.tags);
     }
-    const { id } = req.params;
+    const { id: postId } = req.params;
     const userId = req.headers.user.userId;
     try {
-      await isIdValid(id);
-      await checkForPermissionOnPost(id, userId);
-      const updatedPost = await Post.findByIdAndUpdate(id, post, {
+      await isIdValid(postId);
+      await checkForPermissionOnPost(postId, userId);
+      const updatedPost = await Post.findByIdAndUpdate(postId, post, {
         new: true,
       });
       res.status(200).json({
@@ -88,12 +88,12 @@ export const postsController = {
   },
 
   async delete(req, res) {
-    const { id } = req.params;
+    const { id: postId } = req.params;
     const userId = req.headers.user.userId;
     try {
-      await isIdValid(id);
-      await checkForPermissionOnPost(id, userId);
-      const deletedPost = await Post.findByIdAndRemove(id);
+      await isIdValid(postId);
+      await checkForPermissionOnPost(postId, userId);
+      const deletedPost = await Post.findByIdAndRemove(postId);
       res.status(200).json({
         message: `Deleting gamory '${deletedPost.title}' successful.`,
       });
@@ -103,18 +103,18 @@ export const postsController = {
   },
 
   async like(req, res) {
-    const { id } = req.params;
+    const { id: postId } = req.params;
     const userId = req.headers.user.userId;
     try {
-      await isIdValid(id);
-      const post = await Post.findById(id);               //itt csak a likes-ot kell kiszedni es azt objectkent visszaadni updatenel
-      const index = post.likes.findIndex((id) => id === String(userId));
+      await isIdValid(postId);
+      const postLikes = await Post.findById(postId, {likes: 1}); 
+      const index = postLikes.likes.findIndex((id) => id === String(userId));
       if (index === -1) {
-        post.likes.push(userId);
+        postLikes.likes.push(userId);
       } else {
-        post.likes = post.likes.filter((id) => id !== String(userId));
+        postLikes.likes = postLikes.likes.filter((id) => id !== String(userId));
       }
-      const updatedPost = await Post.findByIdAndUpdate(id, post, { new: true });
+      const updatedPost = await Post.findByIdAndUpdate(postId, postLikes, { new: true });
       res.status(200).json(updatedPost);
     } catch (err) {
       res.status(err.status || 500).json({ message: err.message });
@@ -122,17 +122,17 @@ export const postsController = {
   },
 
   async comment(req, res) {
-    const { id } = req.params;
+    const { id: postId } = req.params;
     const { comment } = req.body;
     try {
-      await isIdValid(id);
+      await isIdValid(postId);
       const commentData = new Comment({
         author: req.headers.user.name,
         authorId: req.headers.user.userId,
         comment,
       });
       const updatedPost = await Post.findByIdAndUpdate(
-        id,
+        postId,
         { $push: { comments: commentData } },
         { new: true }
       );
@@ -143,16 +143,16 @@ export const postsController = {
   },
 };
 
-const isIdValid = async (id) => {
-  if (!mongoose.Types.ObjectId.isValid(id))
+const isIdValid = async (postId) => {
+  if (!mongoose.Types.ObjectId.isValid(postId))
     throw { status: 400, message: "Invalid id." };
 
-  if (!(await Post.findById(id)))
+  if (!(await Post.findById(postId)))
     throw { status: 404, message: "Gamory does not exist." };
 };
 
-const checkForPermissionOnPost = async (id, userId) => {
-  const oldPost = await Post.findById(id);
+const checkForPermissionOnPost = async (postId, userId) => {
+  const oldPost = await Post.findById(postId);
   if (oldPost.authorId !== userId)
     throw {
       status: 401,
