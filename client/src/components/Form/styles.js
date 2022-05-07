@@ -6,10 +6,13 @@ export default makeStyles(() => ({
       margin: `5px 0`,
     },
   },
-  card: ({ postId, absolutPosition, fixedHeight }) => ({
+  card: ({ postId, absolutPosition, fixedHeight, withCloseButton }) => ({
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
     position: absolutPosition ? "absolute" : "static",
     padding: `${postId ? "8px" : "16px"}`,
-    height: fixedHeight ? "464px" : "100%",
+    height: fixedHeight ? (withCloseButton ? "500px" : "464px") : "100%",
     boxSizing: "border-box",
     borderRadius: "15px",
     maxWidth: "900px",
