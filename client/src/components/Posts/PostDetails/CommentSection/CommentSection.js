@@ -92,32 +92,6 @@ const CommentSection = ({ post }) => {
       className={classes.outerContainer}
       spacing={4}
     >
-      <Grid item className={classes.newCommentContainer} xs={12} sm={12} md={5}>
-        <Typography gutterBottom variant="h6">
-          Write a comment
-        </Typography>
-        <TextField
-          required
-          fullWidth
-          minRows={2}
-          maxRows={6}
-          variant="outlined"
-          label="Comment"
-          multiline
-          value={comment}
-          onChange={handleChange}
-          error={isInputError}
-        />
-        <Button
-          className={classes.button}
-          variant="contained"
-          color="primary"
-          size="small"
-          onClick={handleClick}
-        >
-          {`${!user ? "Sign in to c" : "C"}omment`}
-        </Button>
-      </Grid>
       <Grid item className={classes.commentsContainer} xs={12} sm={12} md={7}>
         <Typography gutterBottom variant="h6">
           Comments
@@ -153,6 +127,32 @@ const CommentSection = ({ post }) => {
             </Paper>
           )}
         </div>
+      </Grid>
+      <Grid item className={classes.newCommentContainer} xs={12} sm={12} md={5}>
+        <Typography gutterBottom variant="h6">
+          Write a comment
+        </Typography>
+        <TextField
+          required
+          fullWidth
+          minRows={2}
+          maxRows={6}
+          variant="outlined"
+          label="Comment"
+          multiline
+          value={comment}
+          onChange={handleChange}
+          error={isInputError}
+        />
+        <Button
+          className={classes.button}
+          variant="contained"
+          color="primary"
+          size="small"
+          onClick={handleClick}
+        >
+          {`${!user ? "Sign in to c" : "C"}omment`}
+        </Button>
       </Grid>
     </Grid>
   );

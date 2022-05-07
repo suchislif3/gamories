@@ -4,7 +4,7 @@ export default makeStyles((theme) => ({
   outerContainer: {
     marginBottom: "50px",
     [theme.breakpoints.down("sm")]: {
-      flexDirection: "column",
+      flexDirection: "column-reverse",
     },
   },
   commentsContainer: {
