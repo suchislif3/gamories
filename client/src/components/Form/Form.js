@@ -9,6 +9,7 @@ import { createPost, updatePost } from "../../actions/postsAction";
 import { openDialog } from "../../actions/feedbackAction";
 import isTokenExpired from "../../utils/isTokenExpired";
 import handleExpiredToken from "../../utils/handleExpiredToken";
+import GameInput from "./GameInput";
 
 const Form = ({
   post,
@@ -20,27 +21,57 @@ const Form = ({
   const user = useSelector((state) => state.user);
   const [postId] = useState(post?._id || null);
   const initialPostData = {
+    game: post?.game || "",
     title: post?.title || "",
     description: post?.description || "",
     tags: post?.tags || "",
     selectedFile: post?.selectedFile || "",
   };
   const [postData, setPostData] = useState(initialPostData);
-  const [isInputError, setIsInputError] = useState(false);
-  const classes = useStyles({ postId, absolutPosition, fixedHeight, withCloseButton });
+  const [isInputError, setIsInputError] = useState({
+    game: false,
+    title: false,
+  });
+
+  const classes = useStyles({
+    postId,
+    absolutPosition,
+    fixedHeight,
+    withCloseButton,
+  });
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  
+  const handleChange = (e) => {
+    setPostData(prevData => ({ ...prevData, [e.target.name]: e.target.value }));
+    if (isInputError.hasOwnProperty(e.target.name)) setIsInputError(prev => ({ ...prev, [e.target.name]: false }))
+  };
 
+  const setGame = (newValue) => {
+    setPostData(prevData => ({...prevData, game: newValue}))
+  }
+
+  const setGameIsInputError = (newValue) => {
+    setIsInputError(prev => ({...prev, game: newValue}))
+  }
+  
   const clearPostData = () => {
     setPostData(initialPostData);
-    setIsInputError(false);
+    setIsInputError({
+      game: false,
+      title: false,
+    });
     localStorage.removeItem("postEdit_new");
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!postData.game) {
+      setIsInputError(prevData => ({ ...prevData, game: true }));
+      return;
+    }
     if (!postData.title) {
-      setIsInputError(true);
+      setIsInputError(prevData => ({ ...prevData, title: true }));
       return;
     }
     if (isTokenExpired(user)) {
@@ -119,18 +150,20 @@ const Form = ({
           <Typography variant="h6">
             {postId ? "Edit" : "Share"} your gamory
           </Typography>
+          <GameInput
+            setGame={setGame}
+            isInputError={isInputError.game}
+            setGameIsInputError={setGameIsInputError}
+          />
           <TextField
             name="title"
             variant="outlined"
             label="Title"
             fullWidth
             value={postData.title}
-            onChange={(e) => {
-              setIsInputError(false);
-              setPostData({ ...postData, title: e.target.value });
-            }}
+            onChange={handleChange}
             required
-            error={isInputError}
+            error={isInputError.title}
           />
           <TextField
             name="description"
