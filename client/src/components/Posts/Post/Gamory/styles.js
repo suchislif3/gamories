@@ -1,13 +1,13 @@
 import { makeStyles } from "@material-ui/core";
 
-export default makeStyles({
+export default makeStyles((theme) => ({
   card: {
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
     borderRadius: "15px",
     height: "100%",
-    minHeight: "456px",
+    minHeight: "500px",
     position: "relative",
     opacity: ({ isEdit }) => (isEdit ? "0" : "1"),
     pointerEvents: ({ isEdit }) => (isEdit ? "none" : "auto"),
@@ -32,25 +32,43 @@ export default makeStyles({
     right: "20px",
     color: "white",
   },
+  container: {
+    display: "flex",
+    flexDirection: "column",
+    flexGrow: 1,
+    rowGap: "15px",
+    paddingTop: "12px",
+  },
   details: {
     display: "flex",
+    flexDirection: "column",
+    rowGap: "5px",
     justifyContent: "space-between",
-    margin: "20px",
+    color: theme.palette.text.secondary,
     "& a": {
       textDecoration: "none",
       color: "inherit",
     },
   },
-  title: {
-    padding: "0 4px",
+  gameContainer: {
+    display: "flex",
+    columnGap: "10px",
+  },
+  content: {
+    display: "flex",
+    flexDirection: "column",
+    flexGrow: 1,
+  },
+  deleteIcon: {
+    color: theme.palette.secondary.main,
   },
   description: {
-    padding: "0 4px",
     overflowWrap: "break-word",
   },
   cardActions: {
     padding: "0 15px 15px 15px",
     display: "flex",
     justifyContent: "space-between",
+    justifySelf: "flex-end",
   },
-});
+}));

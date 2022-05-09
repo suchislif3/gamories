@@ -12,7 +12,7 @@ export default makeStyles(() => ({
     justifyContent: "space-between",
     position: absolutPosition ? "absolute" : "static",
     padding: `${postId ? "8px" : "16px"}`,
-    height: fixedHeight ? (withCloseButton ? "500px" : "464px") : "100%",
+    height: fixedHeight ? (withCloseButton ? "556px" : "500px") : "100%",
     boxSizing: "border-box",
     borderRadius: "15px",
     maxWidth: "900px",

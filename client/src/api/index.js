@@ -65,3 +65,5 @@ export const commentPost = (id, comment) => API.post(`/posts/${id}/comment`, {co
 
 export const signIn = (formData) => API.post("/users/signin", formData);
 export const signUp = (formData) => API.post("/users/signup", formData);
+
+export const fetchGames = (searchTerm) => API.get(`/igdb/games?searchTerm=${searchTerm}`);

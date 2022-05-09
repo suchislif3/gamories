@@ -10,6 +10,7 @@ import {
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Edit from "@material-ui/icons/Edit";
+import SportsEsportsOutlinedIcon from "@material-ui/icons/SportsEsportsOutlined";
 import moment from "moment";
 
 import useStyles from "./styles";
@@ -84,6 +85,10 @@ const PostDetails = () => {
             </div>
             <div className={classes.section}>
               <div className={classes.subSection}>
+                <div className={classes.gameContainer}>
+                  <SportsEsportsOutlinedIcon />
+                  <Typography variant="subtitle1">{post?.game}</Typography>
+                </div>
                 <Typography gutterBottom variant="h6" color="textSecondary">
                   {post?.tags[0] !== "" &&
                     post?.tags.map((tag, i) => (
