@@ -8,10 +8,15 @@ import {
   CardMedia,
   Button,
   Typography,
+  Divider,
+  Menu,
+  MenuItem,
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import ChatBubbleOutlineIcon from "@material-ui/icons/ChatBubbleOutline";
 import Edit from "@material-ui/icons/Edit";
+import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
+import SportsEsportsOutlinedIcon from "@material-ui/icons/SportsEsportsOutlined";
 import moment from "moment";
 
 import useStyles from "./styles";
@@ -25,9 +30,19 @@ import gamoriesBrandDark from "../../../../images/gamories_brand_dark.png";
 const Gamory = ({ post, isEdit, setIsEdit }) => {
   const [isUsersPost, setIsUsersPost] = useState(false);
   const { user, isDark } = useSelector((state) => state);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
   const classes = useStyles({ isEdit });
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   useEffect(() => {
     setIsUsersPost(
@@ -57,36 +72,73 @@ const Gamory = ({ post, isEdit, setIsEdit }) => {
         </Typography>
       </div>
       {isUsersPost && (
-        <div className={classes.overlay2}>
-          <Button
-            style={{ color: "inherit" }}
-            size="small"
-            onClick={() => handleEdit(user, setIsEdit)}
-            title="Edit post"
-          >
-            <Edit fontSize="medium" />
-          </Button>
-        </div>
+        <>
+          <div className={classes.overlay2}>
+            <Button
+              aria-controls="author-menu"
+              aria-haspopup="true"
+              onClick={handleClick}
+            >
+              <MoreHorizIcon />
+            </Button>
+            <Menu
+              id="author-menu"
+              anchorEl={anchorEl}
+              keepMounted
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
+            >
+              <MenuItem
+                title="Edit post"
+                onClick={() => {
+                  handleEdit(user, setIsEdit);
+                  handleClose();
+                }}
+              >
+                <Edit style={{ color: "inherit" }} fontSize="medium" />
+                &nbsp;Edit
+              </MenuItem>
+              <MenuItem
+                title="Delete post"
+                className={classes.deleteIcon}
+                onClick={() => {
+                  handleDelete(post);
+                  handleClose();
+                }}
+              >
+                <DeleteIcon fontSize="small" />
+                &nbsp;Delete
+              </MenuItem>
+            </Menu>
+          </div>
+        </>
       )}
-      <div className={classes.details}>
-        <Typography variant="body2" color="textSecondary">
-          {post.tags[0] !== "" &&
-            post.tags.map((tag, i) => (
-              <span key={i}>
-                <Link key={i} to={`/posts/search?searchTerm=&tags=${tag}`}>
-                  #{tag}
-                </Link>{" "}
-              </span>
-            ))}
-        </Typography>
-      </div>
-      <CardContent>
-        <Typography className={classes.title} variant="h5" gutterBottom>
-          {post.title}
-        </Typography>
-        <Typography className={classes.description} variant="body1">
-          {post.description}
-        </Typography>
+      <CardContent className={classes.container}>
+        <div className={classes.details}>
+          <div className={classes.gameContainer}>
+            <SportsEsportsOutlinedIcon />
+            <Typography variant="subtitle1">{post?.game}</Typography>
+          </div>
+          <Typography variant="body2">
+            {post.tags[0] !== "" &&
+              post.tags.map((tag, i) => (
+                <span key={i}>
+                  <Link key={i} to={`/posts/search?searchTerm=&tags=${tag}`}>
+                    #{tag}
+                  </Link>{" "}
+                </span>
+              ))}
+          </Typography>
+          <Divider />
+        </div>
+        <div className={classes.content}>
+          <Typography className={classes.title} variant="h5" gutterBottom>
+            {post.title}
+          </Typography>
+          <Typography className={classes.description} variant="body1">
+            {post.description}
+          </Typography>
+        </div>
       </CardContent>
       <CardActions className={classes.cardActions}>
         <Button
@@ -103,19 +155,9 @@ const Gamory = ({ post, isEdit, setIsEdit }) => {
           onClick={() => navigate(`/posts/${post._id}/#comments`)}
         >
           <ChatBubbleOutlineIcon />
+          &nbsp;
           <Typography variant="body1">{post.comments.length || ""}</Typography>
         </Button>
-        {isUsersPost && (
-          <Button
-            size="small"
-            color="secondary"
-            title="Delete post"
-            onClick={() => handleDelete(post)}
-          >
-            <DeleteIcon fontSize="small" />
-            &nbsp;Delete
-          </Button>
-        )}
       </CardActions>
     </Card>
   );

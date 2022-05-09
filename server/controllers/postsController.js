@@ -34,6 +34,8 @@ export const postsController = {
 
       const data = await Post.find({
         $or: [
+          { author: searchTermRegExp },
+          { game: searchTermRegExp },
           { title: searchTermRegExp },
           { description: searchTermRegExp },
           { tags: { $in: tags.split(",") } },
@@ -66,15 +68,15 @@ export const postsController = {
   },
 
   async patch(req, res) {
-    const post = req.body;
-    if (post.tags && typeof post.tags === "string") {
-      post["tags"] = convertTagsIntoArray(post.tags);
-    }
-    const { id: postId } = req.params;
-    const userId = req.headers.user.userId;
     try {
+      const { id: postId } = req.params;
+      const userId = req.headers.user.userId;
       await isIdValid(postId);
       await checkForPermissionOnPost(postId, userId);
+      const post = req.body;
+      if (post.tags && typeof post.tags === "string") {
+        post["tags"] = convertTagsIntoArray(post.tags);
+      }
       const updatedPost = await Post.findByIdAndUpdate(postId, post, {
         new: true,
       });
@@ -107,14 +109,16 @@ export const postsController = {
     const userId = req.headers.user.userId;
     try {
       await isIdValid(postId);
-      const postLikes = await Post.findById(postId, {likes: 1}); 
+      const postLikes = await Post.findById(postId, { likes: 1 });
       const index = postLikes.likes.findIndex((id) => id === String(userId));
       if (index === -1) {
         postLikes.likes.push(userId);
       } else {
         postLikes.likes = postLikes.likes.filter((id) => id !== String(userId));
       }
-      const updatedPost = await Post.findByIdAndUpdate(postId, postLikes, { new: true });
+      const updatedPost = await Post.findByIdAndUpdate(postId, postLikes, {
+        new: true,
+      });
       res.status(200).json(updatedPost);
     } catch (err) {
       res.status(err.status || 500).json({ message: err.message });

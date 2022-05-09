@@ -5,6 +5,7 @@ const postSchema = mongoose.Schema(
   {
     author: { type: String, required: true },
     authorId: { type: String, required: true },
+    game: { type: String, required: true },
     title: { type: String, required: true },
     description: { type: String, default: "" },
     tags: [String],

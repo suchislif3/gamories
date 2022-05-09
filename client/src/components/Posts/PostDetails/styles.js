@@ -51,6 +51,11 @@ export default makeStyles((theme) => ({
       color: "inherit",
     },
   },
+  gameContainer: {
+    display: "flex",
+    columnGap: "10px",
+    color: theme.palette.text.secondary,
+  },
   cardActions: {
     padding: "0 0 8px 0",
     display: "flex",

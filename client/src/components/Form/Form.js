@@ -1,15 +1,17 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Card, Grow, TextField, Typography } from "@material-ui/core";
+import { Autocomplete, CircularProgress } from "@mui/material/";
 import FileBase from "react-file-base64";
+import debounce from "lodash.debounce";
 
 import useStyles from "./styles";
 import { createPost, updatePost } from "../../actions/postsAction";
 import { openDialog } from "../../actions/feedbackAction";
 import isTokenExpired from "../../utils/isTokenExpired";
 import handleExpiredToken from "../../utils/handleExpiredToken";
-import GameInput from "./GameInput";
+import { fetchGames } from "../../api";
 
 const Form = ({
   post,
@@ -33,6 +35,20 @@ const Form = ({
     title: false,
   });
 
+  const [open, setOpen] = useState(false);
+  const [options, setOptions] = useState([]);
+
+  const [value, setValue] = useState(
+    post?.game ? { id: 0, name: post?.game } : null
+  );
+  const [inputValue, setInputValue] = useState(post?.game || "");
+  const inputValueRef = useRef(inputValue); // define mutable ref
+  useEffect(() => {
+    inputValueRef.current = inputValue;
+  }); // inputValueRef is updated after each render
+
+  const [loading, setLoading] = useState(false);
+
   const classes = useStyles({
     postId,
     absolutPosition,
@@ -41,22 +57,20 @@ const Form = ({
   });
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
+
   const handleChange = (e) => {
-    setPostData(prevData => ({ ...prevData, [e.target.name]: e.target.value }));
-    if (isInputError.hasOwnProperty(e.target.name)) setIsInputError(prev => ({ ...prev, [e.target.name]: false }))
+    setPostData((prevData) => ({
+      ...prevData,
+      [e.target.name]: e.target.value,
+    }));
+    if (isInputError.hasOwnProperty(e.target.name))
+      setIsInputError((prev) => ({ ...prev, [e.target.name]: false }));
   };
 
-  const setGame = (newValue) => {
-    setPostData(prevData => ({...prevData, game: newValue}))
-  }
-
-  const setGameIsInputError = (newValue) => {
-    setIsInputError(prev => ({...prev, game: newValue}))
-  }
-  
   const clearPostData = () => {
     setPostData(initialPostData);
+    setInputValue("");
+    setValue(null);
     setIsInputError({
       game: false,
       title: false,
@@ -64,14 +78,62 @@ const Form = ({
     localStorage.removeItem("postEdit_new");
   };
 
+  useEffect(() => {
+    if (value === null) setPostData((prevData) => ({ ...prevData, game: "" }));
+    if (!inputValue) {
+      setLoading(false);
+      return;
+    }
+    if (inputValue && inputValue === value?.name) {
+      setLoading(false);
+      setPostData((prevData) => ({ ...prevData, game: value?.name }));
+      return;
+    }
+    if (inputValue) {
+      setLoading(true);
+      setIsInputError((prev) => ({ ...prev, game: false }));
+    }
+  }, [inputValue, value]);
+
+  useEffect(() => {
+    let active = true;
+    if (!loading) {
+      return undefined;
+    }
+    const debouncedFetch = debounce(async () => {
+      const { data } = await fetchGames(inputValueRef.current, 1);
+      if (active) {
+        setOptions(data);
+        setLoading(false);
+      }
+    }, 300);
+    debouncedFetch();
+
+    return () => {
+      active = false;
+    };
+  }, [loading]);
+
+  useEffect(() => {
+    if (!open) {
+      if (inputValue === value?.name) {
+        return;
+      } else if (inputValue) {
+        return;
+      } else {
+        setOptions([]);
+      }
+    }
+  }, [inputValue, open, value]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!postData.game) {
-      setIsInputError(prevData => ({ ...prevData, game: true }));
+      setIsInputError((prevData) => ({ ...prevData, game: true }));
       return;
     }
     if (!postData.title) {
-      setIsInputError(prevData => ({ ...prevData, title: true }));
+      setIsInputError((prevData) => ({ ...prevData, title: true }));
       return;
     }
     if (isTokenExpired(user)) {
@@ -89,13 +151,18 @@ const Form = ({
   };
 
   const storeFormData = useCallback(() => {
-    if (postData.title || postData.description || postData.tags) {
+    if (
+      postData?.game ||
+      postData.title ||
+      postData.description ||
+      postData.tags
+    ) {
       localStorage.setItem(
         `postEdit_${postId || "new"}`,
-        JSON.stringify({ ...postData, selectedFile: "" })
+        JSON.stringify({ ...postData, game: value, selectedFile: "" })
       );
     }
-  }, [postData, postId]);
+  }, [postData, postId, value]);
 
   const signInToSubmit = () => {
     storeFormData();
@@ -104,12 +171,16 @@ const Form = ({
 
   const loadAndRemove = useCallback(
     (postId) => {
+      const storedFormData = JSON.parse(
+        localStorage.getItem(`postEdit_${postId ? postId : "new"}`)
+      );
       setPostData({
-        ...JSON.parse(
-          localStorage.getItem(`postEdit_${postId ? postId : "new"}`)
-        ),
+        ...storedFormData,
+        game: storedFormData?.game?.name,
         selectedFile: post?.selectedFile,
       });
+      setValue(storedFormData?.game);
+      setInputValue(storedFormData?.game?.name);
       localStorage.removeItem(`postEdit_${postId ? postId : "new"}`);
     },
     [post?.selectedFile]
@@ -150,10 +221,57 @@ const Form = ({
           <Typography variant="h6">
             {postId ? "Edit" : "Share"} your gamory
           </Typography>
-          <GameInput
-            setGame={setGame}
-            isInputError={isInputError.game}
-            setGameIsInputError={setGameIsInputError}
+          <Autocomplete
+            id="game"
+            value={value}
+            onChange={(event, newValue) => {
+              setValue(newValue);
+            }}
+            inputValue={inputValue}
+            onInputChange={(event, newInputValue) => {
+              setInputValue(newInputValue);
+            }}
+            options={options}
+            isOptionEqualToValue={(option, value) => option.name === value.name}
+            getOptionLabel={(option) => option.name}
+            open={open}
+            onOpen={() => {
+              setOpen(true);
+            }}
+            onClose={() => {
+              setOpen(false);
+            }}
+            loading={loading}
+            fullWidth
+            renderOption={(props, option) => {
+              return (
+                <li {...props} key={option.id} title={option?.storyline}>
+                  {option.name}
+                </li>
+              );
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                name="game"
+                required
+                label="Game"
+                variant="outlined"
+                error={isInputError.game}
+                placeholder="type to search..."
+                InputProps={{
+                  ...params.InputProps,
+                  endAdornment: (
+                    <>
+                      {loading ? (
+                        <CircularProgress color="inherit" size={20} />
+                      ) : null}
+                      {params.InputProps.endAdornment}
+                    </>
+                  ),
+                }}
+              />
+            )}
           />
           <TextField
             name="title"
