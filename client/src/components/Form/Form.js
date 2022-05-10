@@ -142,12 +142,16 @@ const Form = ({
       return;
     }
     if (postId) {
-      dispatch(updatePost(postId, postData));
-      setIsEdit(false);
+      dispatch(updatePost(postId, postData)).then(() => {
+        setIsEdit(false);
+        clearPostData();
+      });
     } else {
-      dispatch(createPost(postData, navigate));
+      dispatch(createPost(postData, navigate)).then(() => {
+        setIsEdit(false);
+        clearPostData();
+      });
     }
-    clearPostData();
   };
 
   const storeFormData = useCallback(() => {

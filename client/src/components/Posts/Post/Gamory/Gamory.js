@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { memo, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 import {
@@ -28,28 +28,45 @@ import gamoriesBrand from "../../../../images/gamories_brand.png";
 import gamoriesBrandDark from "../../../../images/gamories_brand_dark.png";
 
 const Gamory = ({ post, isEdit, setIsEdit }) => {
-  const [isUsersPost, setIsUsersPost] = useState(false);
-  const { user, isDark } = useSelector((state) => state);
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const user = useSelector((state) => state.user);
+  const isDark = useSelector((state) => state.isDark);
+  const isUsersPost = useMemo(
+    () =>
+      user?.result?.googleId === post?.authorId ||
+      user?.result?._id === post?.authorId,
+    [post?.authorId, user?.result?._id, user?.result?.googleId]
+  );
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const classes = useStyles({ isEdit });
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleClick = (event) => {
+  const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = () => {
+  const handleMenuClose = () => {
     setAnchorEl(null);
   };
 
-  useEffect(() => {
-    setIsUsersPost(
-      user?.result?.googleId === post?.authorId ||
-        user?.result?._id === post?.authorId
-    );
-  }, [post?.authorId, user]);
+  const handleEditClick = () => {
+    handleEdit(user, setIsEdit);
+    handleMenuClose();
+  };
+
+  const handleDeleteClick = () => {
+    handleDelete(post);
+    handleMenuClose();
+  };
+
+  const handleLikeClick = () => {
+    dispatch(likePost(post._id));
+  };
+
+  const handleCommentsClick = () => {
+    navigate(`/posts/${post._id}/#comments`);
+  };
 
   const openPost = () => {
     navigate(`/posts/${post._id}`);
@@ -77,7 +94,7 @@ const Gamory = ({ post, isEdit, setIsEdit }) => {
             <Button
               aria-controls="author-menu"
               aria-haspopup="true"
-              onClick={handleClick}
+              onClick={handleMenuClick}
             >
               <MoreHorizIcon />
             </Button>
@@ -86,25 +103,16 @@ const Gamory = ({ post, isEdit, setIsEdit }) => {
               anchorEl={anchorEl}
               keepMounted
               open={Boolean(anchorEl)}
-              onClose={handleClose}
+              onClose={handleMenuClose}
             >
-              <MenuItem
-                title="Edit post"
-                onClick={() => {
-                  handleEdit(user, setIsEdit);
-                  handleClose();
-                }}
-              >
+              <MenuItem title="Edit post" onClick={handleEditClick}>
                 <Edit style={{ color: "inherit" }} fontSize="medium" />
                 &nbsp;Edit
               </MenuItem>
               <MenuItem
                 title="Delete post"
                 className={classes.deleteIcon}
-                onClick={() => {
-                  handleDelete(post);
-                  handleClose();
-                }}
+                onClick={handleDeleteClick}
               >
                 <DeleteIcon fontSize="small" />
                 &nbsp;Delete
@@ -145,15 +153,11 @@ const Gamory = ({ post, isEdit, setIsEdit }) => {
           size="small"
           color="primary"
           variant="contained"
-          onClick={() => dispatch(likePost(post._id))}
+          onClick={handleLikeClick}
         >
           <Likes post={post} />
         </Button>
-        <Button
-          size="small"
-          color="primary"
-          onClick={() => navigate(`/posts/${post._id}/#comments`)}
-        >
+        <Button size="small" color="primary" onClick={handleCommentsClick}>
           <ChatBubbleOutlineIcon />
           &nbsp;
           <Typography variant="body1">{post.comments.length || ""}</Typography>
@@ -163,4 +167,4 @@ const Gamory = ({ post, isEdit, setIsEdit }) => {
   );
 };
 
-export default Gamory;
+export default memo(Gamory);

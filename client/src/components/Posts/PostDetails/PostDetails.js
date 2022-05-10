@@ -15,8 +15,7 @@ import moment from "moment";
 
 import useStyles from "./styles";
 import CommentSection from "./CommentSection/CommentSection";
-import { getPost, likePost } from "../../../actions/postsAction";
-import { START_LOADING } from "../../../actions/actionTypes";
+import { getPost, likePost, startLoading } from "../../../actions/postsAction";
 import Likes from "../Likes/Likes";
 import Form from "../../Form/Form";
 import handleEdit from "../../../utils/handleEdit";
@@ -26,7 +25,8 @@ import gamoriesBrandDark from "../../../images/gamories_brand_dark.png";
 
 const PostDetails = () => {
   const { postById: post, isLoading } = useSelector((state) => state.posts);
-  const { user, isDark } = useSelector((state) => state);
+  const user = useSelector((state) => state.user);
+  const isDark = useSelector((state) => state.isDark);
   const [isUsersPost, setIsUsersPost] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const dispatch = useDispatch();
@@ -44,7 +44,7 @@ const PostDetails = () => {
   useEffect(() => {
     dispatch(getPost(id, navigate));
     return () => {
-      dispatch({ type: START_LOADING });
+      dispatch(startLoading());
     };
   }, [dispatch, id, navigate]);
 

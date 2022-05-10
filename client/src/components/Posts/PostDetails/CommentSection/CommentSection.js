@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { memo, useState, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
@@ -158,4 +158,4 @@ const CommentSection = ({ post }) => {
   );
 };
 
-export default CommentSection;
+export default memo(CommentSection);
