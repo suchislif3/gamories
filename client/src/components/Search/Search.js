@@ -26,6 +26,15 @@ const Search = () => {
     if (searchTerm === "" && tags.length === 0) {
       navigate("/posts");
     } else {
+      if (chipInputValue !== "") {
+        setIsChipError(true);
+        dispatch(
+          openSnackBar(
+            "Please complete the tag to be searched for by typing [space] or [,] after it."
+          )
+        );
+        return;
+      }
       navigate(
         `/posts/search?searchTerm=${searchTerm || ""}&tags=${tags.join(",")}`
       );
@@ -48,15 +57,6 @@ const Search = () => {
 
   const handleKeyDown = (e) => {
     if (e.keyCode === 13) {
-      if (tags.length === 0 && chipInputValue !== "") {
-        setIsChipError(true);
-        dispatch(
-          openSnackBar(
-            "Please complete the tag to search by pressing [space] or [,]."
-          )
-        );
-        return;
-      }
       searchPost();
     }
   };
