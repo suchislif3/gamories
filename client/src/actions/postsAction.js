@@ -74,9 +74,9 @@ export const getPostsBySearch = (searchQuery) => async (dispatch) => {
   }
 };
 
-export const createPost = (post, navigate) => async (dispatch) => {
+export const createPost = (post, base64Image = null, navigate) => async (dispatch) => {
   try {
-    const { data } = await api.createPost(post);
+    const { data } = await api.createPost(post, base64Image);
     dispatch({ type: CREATE, payload: data.post });
     navigate(`/posts/${data.post._id}`);
   } catch (err) {
@@ -84,9 +84,9 @@ export const createPost = (post, navigate) => async (dispatch) => {
   }
 };
 
-export const updatePost = (id, post) => async (dispatch) => {
+export const updatePost = (id, post, base64Image) => async (dispatch) => {
   try {
-    const { data } = await api.updatePost(id, post);
+    const { data } = await api.updatePost(id, post, base64Image);
     dispatch({ type: UPDATE, payload: data.post });
   } catch (err) {
     console.log(err);

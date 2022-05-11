@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { commentSchema } from "./comment.js";
+import { imageSchema } from "./image.js";
 
 const postSchema = mongoose.Schema(
   {
@@ -9,7 +10,9 @@ const postSchema = mongoose.Schema(
     title: { type: String, required: true },
     description: { type: String, default: "" },
     tags: [String],
-    selectedFile: String,
+    image: {
+      type: imageSchema,
+    },
     likes: {
       type: [String],
       default: [],

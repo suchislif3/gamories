@@ -2,16 +2,17 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Card, Grow, TextField, Typography } from "@material-ui/core";
+import DoneIcon from "@material-ui/icons/Done";
 import { Autocomplete, CircularProgress } from "@mui/material/";
-import FileBase from "react-file-base64";
 import debounce from "lodash.debounce";
+import localForage from "localforage";
 
 import useStyles from "./styles";
 import { createPost, updatePost } from "../../actions/postsAction";
-import { openDialog } from "../../actions/feedbackAction";
+import { openDialog, openSnackBar } from "../../actions/feedbackAction";
 import isTokenExpired from "../../utils/isTokenExpired";
 import handleExpiredToken from "../../utils/handleExpiredToken";
-import { fetchGames } from "../../api";
+import { fetchGamesBySearch } from "../../api";
 
 const Form = ({
   post,
@@ -27,7 +28,10 @@ const Form = ({
     title: post?.title || "",
     description: post?.description || "",
     tags: post?.tags || "",
-    selectedFile: post?.selectedFile || "",
+    image: {
+      publicId: post?.image?.publicId || "",
+      url: post?.image?.url || "",
+    },
   };
   const [postData, setPostData] = useState(initialPostData);
   const [isInputError, setIsInputError] = useState({
@@ -35,28 +39,32 @@ const Form = ({
     title: false,
   });
 
-  const [open, setOpen] = useState(false);
-  const [options, setOptions] = useState([]);
-
-  const [value, setValue] = useState(
+  const [gameOpen, setGameOpen] = useState(false);
+  const [gameOptions, setGameOptions] = useState([]);
+  const [gameValue, setGameValue] = useState(
     post?.game ? { id: 0, name: post?.game } : null
   );
-  const [inputValue, setInputValue] = useState(post?.game || "");
-  const inputValueRef = useRef(inputValue); // define mutable ref
-  useEffect(() => {
-    inputValueRef.current = inputValue;
-  }); // inputValueRef is updated after each render
+  const [gameInputValue, setGameInputValue] = useState(post?.game || "");
+  const gameInputValueRef = useRef(gameInputValue); // define mutable ref
 
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewSource, setPreviewSource] = useState(post?.image?.url || null);
   const [loading, setLoading] = useState(false);
+  const [pendingRequest, setPendingRequest] = useState(false);
 
   const classes = useStyles({
     postId,
     absolutPosition,
     fixedHeight,
     withCloseButton,
+    pendingRequest,
   });
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    gameInputValueRef.current = gameInputValue;
+  }); // gameInputValueRef is updated after each render
 
   const handleChange = (e) => {
     setPostData((prevData) => ({
@@ -69,31 +77,32 @@ const Form = ({
 
   const clearPostData = () => {
     setPostData(initialPostData);
-    setInputValue("");
-    setValue(null);
+    setGameInputValue("");
+    setGameValue(null);
     setIsInputError({
       game: false,
       title: false,
     });
-    localStorage.removeItem("postEdit_new");
+    setSelectedFile(null);
+    setPendingRequest(false);
   };
 
   useEffect(() => {
-    if (value === null) setPostData((prevData) => ({ ...prevData, game: "" }));
-    if (!inputValue) {
+    if (gameValue === null) setPostData((prevData) => ({ ...prevData, game: "" }));
+    if (!gameInputValue) {
       setLoading(false);
       return;
     }
-    if (inputValue && inputValue === value?.name) {
+    if (gameInputValue && gameInputValue === gameValue?.name) {
       setLoading(false);
-      setPostData((prevData) => ({ ...prevData, game: value?.name }));
+      setPostData((prevData) => ({ ...prevData, game: gameValue?.name }));
       return;
     }
-    if (inputValue) {
+    if (gameInputValue) {
       setLoading(true);
       setIsInputError((prev) => ({ ...prev, game: false }));
     }
-  }, [inputValue, value]);
+  }, [gameInputValue, gameValue]);
 
   useEffect(() => {
     let active = true;
@@ -101,9 +110,9 @@ const Form = ({
       return undefined;
     }
     const debouncedFetch = debounce(async () => {
-      const { data } = await fetchGames(inputValueRef.current, 1);
+      const { data } = await fetchGamesBySearch(gameInputValueRef.current, 1);
       if (active) {
-        setOptions(data);
+        setGameOptions(data);
         setLoading(false);
       }
     }, 300);
@@ -115,16 +124,41 @@ const Form = ({
   }, [loading]);
 
   useEffect(() => {
-    if (!open) {
-      if (inputValue === value?.name) {
+    if (!gameOpen) {
+      if (gameInputValue === gameValue?.name) {
         return;
-      } else if (inputValue) {
+      } else if (gameInputValue) {
         return;
       } else {
-        setOptions([]);
+        setGameOptions([]);
       }
     }
-  }, [inputValue, open, value]);
+  }, [gameInputValue, gameOpen, gameValue]);
+
+  const isFileImage = (file) => {
+    if (file?.type.split("/")[0] === "image") {
+      return true;
+    }
+    return false;
+  };
+
+  const handleFileInputChange = (e) => {
+    const file = e.target.files[0];
+    if (file && isFileImage(file)) {
+      setSelectedFile({ type: file.type, name: file.name });
+      previewFile(file);
+    } else if (file) {
+      dispatch(openSnackBar("Please select an image to upload."));
+    }
+  };
+
+  const previewFile = (file) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      setPreviewSource(reader.result);
+    };
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -141,209 +175,277 @@ const Form = ({
       signInToSubmit();
       return;
     }
+    const base64Image = selectedFile ? previewSource : null;
     if (postId) {
-      dispatch(updatePost(postId, postData)).then(() => {
+      setPendingRequest(true);
+      dispatch(updatePost(postId, postData, base64Image)).then(() => {
         setIsEdit(false);
         clearPostData();
       });
     } else {
-      dispatch(createPost(postData, navigate)).then(() => {
+      setPendingRequest(true);
+      dispatch(createPost(postData, base64Image, navigate)).then(() => {
         setIsEdit(false);
         clearPostData();
       });
     }
   };
 
-  const storeFormData = useCallback(() => {
+  const storePostEdit = useCallback(() => {
+    localStorage.setItem(
+      `postEdit_${postId || "new"}`,
+      JSON.stringify({ ...postData, game: gameValue, selectedFile: "" })
+    );
+  }, [postData, postId, gameValue]);
+
+  const storeFileData = useCallback(async () => {
+    await localForage.setItem(`fileData_${postId || "new"}`, {
+      selectedFile: selectedFile,
+      previewSource: previewSource,
+    });
+  }, [postId, previewSource, selectedFile]);
+
+  const storeFormData = useCallback(async () => {
     if (
       postData?.game ||
       postData.title ||
       postData.description ||
       postData.tags
     ) {
-      localStorage.setItem(
-        `postEdit_${postId || "new"}`,
-        JSON.stringify({ ...postData, game: value, selectedFile: "" })
-      );
+      storePostEdit();
     }
-  }, [postData, postId, value]);
+    if (selectedFile) {
+      await storeFileData();
+    }
+  }, [
+    postData.description,
+    postData?.game,
+    postData.tags,
+    postData.title,
+    selectedFile,
+    storeFileData,
+    storePostEdit,
+  ]);
 
-  const signInToSubmit = () => {
-    storeFormData();
+  const signInToSubmit = async () => {
+    await storeFormData();
     navigate("/auth");
   };
 
-  const loadAndRemove = useCallback(
-    (postId) => {
-      const storedFormData = JSON.parse(
-        localStorage.getItem(`postEdit_${postId ? postId : "new"}`)
-      );
-      setPostData({
-        ...storedFormData,
-        game: storedFormData?.game?.name,
-        selectedFile: post?.selectedFile,
-      });
-      setValue(storedFormData?.game);
-      setInputValue(storedFormData?.game?.name);
-      localStorage.removeItem(`postEdit_${postId ? postId : "new"}`);
-    },
-    [post?.selectedFile]
-  );
+  const loadAndRemove = useCallback(async (postId) => {
+    const storedPostEdit = JSON.parse(
+      localStorage.getItem(`postEdit_${postId || "new"}`)
+    );
+    const storedFileData = await localForage.getItem(
+      `fileData_${postId || "new"}`
+    );
+    setPostData({
+      ...storedPostEdit,
+      game: storedPostEdit?.game?.name,
+    });
+    if (storedFileData) {
+      setSelectedFile(storedFileData.selectedFile);
+      setPreviewSource(storedFileData.previewSource);
+    }
+    setGameValue(storedPostEdit?.game);
+    setGameInputValue(storedPostEdit?.game?.name);
+    localStorage.removeItem(`postEdit_${postId ? postId : "new"}`);
+    await localForage.removeItem(`fileData_${postId || "new"}`);
+  }, []);
 
-  const handleClose = () => {
-    storeFormData();
+  const handleClose = async () => {
+    await storeFormData();
     setIsEdit(false);
   };
 
   useEffect(() => {
-    if (localStorage.getItem(`postEdit_${postId ? postId : "new"}`)) {
-      if (postId) {
-        dispatch(
-          openDialog({
-            title: "Do you want to load your previous edit?",
-            message: "If not, it will be deleted.",
-            buttonAgree: "YES",
-            buttonDisagree: "NO",
-            confirmAction: () => loadAndRemove(postId),
-          })
-        );
-      } else {
-        loadAndRemove();
+    async function isPostDataStored() {
+      if (
+        localStorage.getItem(`postEdit_${postId || "new"}`) ||
+        (await localForage.getItem(`fileData_${postId || "new"}`))
+      ) {
+        if (postId) {
+          dispatch(
+            openDialog({
+              title: "Do you want to load your previous edit?",
+              message: "If not, it will be deleted.",
+              buttonAgree: "YES",
+              buttonDisagree: "NO",
+              confirmAction: () => loadAndRemove(postId),
+            })
+          );
+        } else {
+          loadAndRemove();
+        }
       }
     }
+    isPostDataStored();
   }, [dispatch, loadAndRemove, postId]);
 
   return (
     <Grow in>
       <Card className={classes.card} raised elevation={6}>
-        <form
-          autoComplete="off"
-          noValidate
-          className={`${classes.root} ${classes.form}`}
-          onSubmit={handleSubmit}
-        >
-          <Typography variant="h6">
-            {postId ? "Edit" : "Share"} your gamory
-          </Typography>
-          <Autocomplete
-            id="game"
-            value={value}
-            onChange={(event, newValue) => {
-              setValue(newValue);
-            }}
-            inputValue={inputValue}
-            onInputChange={(event, newInputValue) => {
-              setInputValue(newInputValue);
-            }}
-            options={options}
-            isOptionEqualToValue={(option, value) => option.name === value.name}
-            getOptionLabel={(option) => option.name}
-            open={open}
-            onOpen={() => {
-              setOpen(true);
-            }}
-            onClose={() => {
-              setOpen(false);
-            }}
-            loading={loading}
-            fullWidth
-            renderOption={(props, option) => {
-              return (
-                <li {...props} key={option.id} title={option?.storyline}>
-                  {option.name}
-                </li>
-              );
-            }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                name="game"
-                required
-                label="Game"
-                variant="outlined"
-                error={isInputError.game}
-                placeholder="type to search..."
-                InputProps={{
-                  ...params.InputProps,
-                  endAdornment: (
-                    <>
-                      {loading ? (
-                        <CircularProgress color="inherit" size={20} />
-                      ) : null}
-                      {params.InputProps.endAdornment}
-                    </>
-                  ),
+        {pendingRequest ? (
+          <CircularProgress size={"4em"} />
+        ) : (
+          <>
+            <form
+              autoComplete="off"
+              noValidate
+              className={`${classes.root} ${classes.form}`}
+              onSubmit={handleSubmit}
+            >
+              <Typography variant="h6">
+                {postId ? "Edit" : "Share"} your gamory
+              </Typography>
+              <Autocomplete
+                id="game"
+                value={gameValue}
+                onChange={(event, newValue) => {
+                  setGameValue(newValue);
                 }}
+                inputValue={gameInputValue}
+                onInputChange={(event, newInputValue) => {
+                  setGameInputValue(newInputValue);
+                }}
+                options={gameOptions}
+                isOptionEqualToValue={(option, value) =>
+                  option.name === value.name
+                }
+                getOptionLabel={(option) => option.name}
+                open={gameOpen}
+                onOpen={() => {
+                  setGameOpen(true);
+                }}
+                onClose={() => {
+                  setGameOpen(false);
+                }}
+                loading={loading}
+                fullWidth
+                renderOption={(props, option) => {
+                  return (
+                    <li {...props} key={option.id} title={option?.storyline}>
+                      {option.name}
+                    </li>
+                  );
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    name="game"
+                    required
+                    label="Game"
+                    variant="outlined"
+                    error={isInputError.game}
+                    placeholder="type to search..."
+                    InputProps={{
+                      ...params.InputProps,
+                      endAdornment: (
+                        <>
+                          {loading ? (
+                            <CircularProgress color="inherit" size={20} />
+                          ) : null}
+                          {params.InputProps.endAdornment}
+                        </>
+                      ),
+                    }}
+                  />
+                )}
               />
+              <TextField
+                name="title"
+                variant="outlined"
+                label="Title"
+                fullWidth
+                value={postData.title}
+                onChange={handleChange}
+                required
+                error={isInputError.title}
+              />
+              <TextField
+                name="description"
+                variant="outlined"
+                label="Description"
+                fullWidth
+                multiline
+                minRows={2}
+                maxRows={3}
+                value={postData.description}
+                onChange={(e) =>
+                  setPostData({ ...postData, description: e.target.value })
+                }
+              />
+              <TextField
+                name="tags"
+                variant="outlined"
+                label="Tags (comma separated)"
+                fullWidth
+                value={postData.tags}
+                onChange={(e) =>
+                  setPostData({ ...postData, tags: e.target.value })
+                }
+              />
+              <div className={classes.fileInput}>
+                <input
+                  type="file"
+                  id="file-select"
+                  name="file-select"
+                  style={{ display: "none" }}
+                  onChange={handleFileInputChange}
+                />
+                <Button
+                  type={"button"}
+                  variant="outlined"
+                  color="primary"
+                  size="small"
+                  onClick={() => document.getElementById("file-select").click()}
+                >
+                  Upload image
+                </Button>
+                {previewSource ? (
+                  <>
+                    {selectedFile && <DoneIcon />}
+                    <img
+                      src={previewSource}
+                      alt="chosen"
+                      style={{ height: "30px" }}
+                    />
+                  </>
+                ) : (
+                  <Typography variant="caption">nothing selected</Typography>
+                )}
+              </div>
+              <Button
+                type={user ? "submit" : "button"}
+                variant="contained"
+                className={classes.buttonSubmit}
+                color="primary"
+                size="large"
+                fullWidth
+                onClick={() => {
+                  if (!user) signInToSubmit();
+                }}
+              >
+                {user ? (postId ? "Save" : "Submit") : "Sign in to submit"}
+              </Button>
+              <Button
+                onClick={
+                  postId ? () => setIsEdit(false) : () => clearPostData()
+                }
+                variant="contained"
+                color="secondary"
+                size="small"
+                fullWidth
+              >
+                {postId ? "Cancel" : "Clear"}
+              </Button>
+            </form>
+            {withCloseButton && (
+              <Button onClick={handleClose} color="primary">
+                close
+              </Button>
             )}
-          />
-          <TextField
-            name="title"
-            variant="outlined"
-            label="Title"
-            fullWidth
-            value={postData.title}
-            onChange={handleChange}
-            required
-            error={isInputError.title}
-          />
-          <TextField
-            name="description"
-            variant="outlined"
-            label="Description"
-            fullWidth
-            multiline
-            minRows={2}
-            maxRows={4}
-            value={postData.description}
-            onChange={(e) =>
-              setPostData({ ...postData, description: e.target.value })
-            }
-          />
-          <TextField
-            name="tags"
-            variant="outlined"
-            label="Tags (comma separated)"
-            fullWidth
-            value={postData.tags}
-            onChange={(e) => setPostData({ ...postData, tags: e.target.value })}
-          />
-          <div className={classes.fileInput}>
-            <FileBase
-              type="file"
-              multiple={false}
-              onDone={({ base64 }) =>
-                setPostData({ ...postData, selectedFile: base64 })
-              }
-            />
-          </div>
-          <Button
-            type={user ? "submit" : "button"}
-            variant="contained"
-            className={classes.buttonSubmit}
-            color="primary"
-            size="large"
-            fullWidth
-            onClick={() => {
-              if (!user) signInToSubmit();
-            }}
-          >
-            {user ? (postId ? "Save" : "Submit") : "Sign in to submit"}
-          </Button>
-          <Button
-            onClick={postId ? () => setIsEdit(false) : () => clearPostData()}
-            variant="contained"
-            color="secondary"
-            size="small"
-            fullWidth
-          >
-            {postId ? "Cancel" : "Clear"}
-          </Button>
-        </form>
-        {withCloseButton && (
-          <Button onClick={handleClose} color="primary">
-            close
-          </Button>
+          </>
         )}
       </Card>
     </Grow>

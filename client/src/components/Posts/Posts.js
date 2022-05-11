@@ -4,7 +4,6 @@ import { useSearchParams } from "react-router-dom";
 import { Grid, CircularProgress, Typography } from "@material-ui/core";
 import InfiniteScroll from "react-infinite-scroll-component";
 
-import useStyles from "./styles";
 import Post from "./Post/Post";
 import Brand from "../Brand/Brand";
 import {
@@ -21,7 +20,6 @@ const Posts = () => {
     hasMore,
     data: posts,
   } = useSelector((state) => state.posts);
-  const classes = useStyles();
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
   const hasMoreRef = useRef(hasMore);
@@ -87,7 +85,6 @@ const Posts = () => {
       style={{ overflow: "visible" }}
     >
       <Grid
-        className={classes.container}
         container
         alignItems="stretch"
         spacing={3}

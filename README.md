@@ -7,7 +7,7 @@ MongoDB, Express, React, Node
 ## main features
 - jwt authentication
 - Google sign in (OAuth2.0)
-- users can create posts including game, title, description, tags and file selection
+- users can create posts including game, title, description, tags and image upload
 - users can edit their posts (in-place editing)
 - users can delete their posts
 - users can like posts
@@ -18,7 +18,7 @@ MongoDB, Express, React, Node
 - light and dark mode
 
 
-## what was new to me / what I learned in this project?
+## what was new to me / what I learned in this project
 - MongoDB
 - Redux
 - Material UI
@@ -26,3 +26,6 @@ MongoDB, Express, React, Node
 - Google OAuth2.0
 - infinite scrolling taking into account that posts can be added and deleted in the meantime
 - autocomplete search input using IGDB API with debouncing
+- image upload/delete using Cloudinary API
+- React Dev Tools Profiler
+- using IndexedDB storage

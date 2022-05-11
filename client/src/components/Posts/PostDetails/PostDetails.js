@@ -77,7 +77,7 @@ const PostDetails = () => {
               <img
                 className={classes.media}
                 src={
-                  post?.selectedFile ||
+                  post?.image?.url ||
                   (isDark ? gamoriesBrandDark : gamoriesBrand)
                 }
                 alt={post?.title}

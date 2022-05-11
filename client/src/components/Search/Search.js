@@ -23,7 +23,7 @@ const Search = () => {
   );
 
   const searchPost = () => {
-    if (searchTerm === "" && tags.length === 0) {
+    if (searchTerm === "" && tags.length === 0 && chipInputValue === "") {
       navigate("/posts");
     } else {
       if (chipInputValue !== "") {

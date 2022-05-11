@@ -27,7 +27,6 @@ export default makeStyles((theme) => ({
     position: "absolute",
     top: "20px",
     right: "20px",
-    color: "white",
   },
   container: {
     display: "flex",

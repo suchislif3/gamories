@@ -77,7 +77,7 @@ const Gamory = ({ post, isEdit, setIsEdit }) => {
       <CardMedia
         className={classes.media}
         image={
-          post.selectedFile || (isDark ? gamoriesBrandDark : gamoriesBrand)
+          post?.image?.url || (isDark ? gamoriesBrandDark : gamoriesBrand)
         }
         title={post.title}
         onClick={openPost}
@@ -96,7 +96,7 @@ const Gamory = ({ post, isEdit, setIsEdit }) => {
               aria-haspopup="true"
               onClick={handleMenuClick}
             >
-              <MoreHorizIcon />
+              <MoreHorizIcon style={{color: "white"}}/>
             </Button>
             <Menu
               id="author-menu"
