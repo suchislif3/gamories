@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { memo, useState, useEffect, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { AppBar, Button, TextField } from "@material-ui/core";
@@ -115,4 +115,4 @@ const Search = () => {
   );
 };
 
-export default Search;
+export default memo(Search);
