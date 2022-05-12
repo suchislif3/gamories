@@ -144,15 +144,23 @@ const Form = ({
   }, [gameInputValue, gameOpen, gameOptions.length, gameValue]);
 
   const isFileImage = (file) => {
-    if (file?.type.split("/")[0] === "image") {
-      return true;
-    }
+    if (file?.type.split("/")[0] === "image") return true;
+    return false;
+  };
+
+  const isFileSizeTooBig = (file) => {
+    const maxFileSizeMb = 10;
+    if (file.size / 1024 / 1024 > maxFileSizeMb) return true;
     return false;
   };
 
   const handleFileInputChange = (e) => {
     const file = e.target.files[0];
     if (file && isFileImage(file)) {
+      if (isFileSizeTooBig(file)) {
+        dispatch(openSnackBar("The maximum image file size is 10MB."));
+        return;
+      }
       setSelectedFile({ type: file.type, name: file.name });
       previewFile(file);
     } else if (file) {
@@ -420,7 +428,7 @@ const Form = ({
                     />
                   </>
                 ) : (
-                  <Typography variant="caption">nothing selected</Typography>
+                  <Typography variant="caption">(max.10MB)</Typography>
                 )}
               </div>
               <Button
