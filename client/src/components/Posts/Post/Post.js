@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, memo } from "react";
 import { Container } from "@material-ui/core";
 
 import useStyles from "./styles";
@@ -11,10 +11,13 @@ const Post = ({ post }) => {
 
   return (
     <Container className={classes.postContainer}>
-      {isEdit && <Form post={post} setIsEdit={setIsEdit} absolutPosition />}
-      <Gamory post={post} isEdit={isEdit} setIsEdit={setIsEdit} />
+      {isEdit ? (
+        <Form post={post} setIsEdit={setIsEdit} absolutPosition />
+      ) : (
+        <Gamory post={post} isEdit={isEdit} setIsEdit={setIsEdit} />
+      )}
     </Container>
   );
 };
 
-export default Post;
+export default memo(Post);

@@ -9,9 +9,6 @@ export default makeStyles((theme) => ({
     height: "100%",
     minHeight: "500px",
     position: "relative",
-    opacity: ({ isEdit }) => (isEdit ? "0" : "1"),
-    pointerEvents: ({ isEdit }) => (isEdit ? "none" : "auto"),
-    transition: "all ease-in 0.1s",
   },
   media: {
     height: 0,
@@ -30,7 +27,6 @@ export default makeStyles((theme) => ({
     position: "absolute",
     top: "20px",
     right: "20px",
-    color: "white",
   },
   container: {
     display: "flex",

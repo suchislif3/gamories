@@ -15,12 +15,24 @@ import {
 
 // action creators
 
+export const changeHasMore = (newValue) => {
+  return { type: CHANGE_HASMORE, payload: newValue };
+};
+
+export const startLoading = () => {
+  return { type: START_LOADING };
+};
+
+export const endLoading = () => {
+  return { type: END_LOADING };
+};
+
 export const getPost = (id, navigate) => async (dispatch) => {
   try {
-    dispatch({ type: START_LOADING });
+    dispatch(startLoading());
     const { data } = await api.fetchPost(id);
     dispatch({ type: FETCH_BY_ID, payload: data });
-    dispatch({ type: END_LOADING });
+    dispatch(endLoading());
   } catch (err) {
     navigate("/posts");
     console.log(err.message);
@@ -29,10 +41,10 @@ export const getPost = (id, navigate) => async (dispatch) => {
 
 export const getPosts = () => async (dispatch) => {
   try {
-    dispatch({ type: START_LOADING });
+    dispatch(startLoading());
     const { data } = await api.fetchPosts();
     dispatch({ type: FETCH_INITIAL, payload: data });
-    dispatch({ type: END_LOADING });
+    dispatch(endLoading());
   } catch (err) {
     console.log(err.message);
   }
@@ -53,18 +65,18 @@ export const addPosts = (startId) => async (dispatch) => {
 
 export const getPostsBySearch = (searchQuery) => async (dispatch) => {
   try {
-    dispatch({ type: START_LOADING });
+    dispatch(startLoading());
     const { data } = await api.fetchPostsBySearch(searchQuery);
     dispatch({ type: FETCH_BY_SEARCH, payload: data });
-    dispatch({ type: END_LOADING });
+    dispatch(endLoading());
   } catch (err) {
     console.log(err.message);
   }
 };
 
-export const createPost = (post, navigate) => async (dispatch) => {
+export const createPost = (post, base64Image = null, navigate) => async (dispatch) => {
   try {
-    const { data } = await api.createPost(post);
+    const { data } = await api.createPost(post, base64Image);
     dispatch({ type: CREATE, payload: data.post });
     navigate(`/posts/${data.post._id}`);
   } catch (err) {
@@ -72,9 +84,9 @@ export const createPost = (post, navigate) => async (dispatch) => {
   }
 };
 
-export const updatePost = (id, post) => async (dispatch) => {
+export const updatePost = (id, post, base64Image) => async (dispatch) => {
   try {
-    const { data } = await api.updatePost(id, post);
+    const { data } = await api.updatePost(id, post, base64Image);
     dispatch({ type: UPDATE, payload: data.post });
   } catch (err) {
     console.log(err);
@@ -107,8 +119,4 @@ export const commentPost = (id, comment) => async (dispatch) => {
   } catch (err) {
     console.log(err.message);
   }
-};
-
-export const changeHasMore = (newValue) => {
-  return { type: CHANGE_HASMORE, payload: newValue };
 };

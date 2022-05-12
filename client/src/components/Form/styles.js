@@ -6,15 +6,17 @@ export default makeStyles(() => ({
       margin: `5px 0`,
     },
   },
-  card: ({ postId, absolutPosition, fixedHeight, withCloseButton }) => ({
+  card: ({ postId, absolutPosition, fixedHeight, withCloseButton, pendingRequest }) => ({
     display: "flex",
     flexDirection: "column",
-    justifyContent: "space-between",
+    justifyContent: pendingRequest ? "center" : "space-between",
+    alignItems: "center",
     position: absolutPosition ? "absolute" : "static",
     padding: `${postId ? "8px" : "16px"}`,
     height: fixedHeight ? (withCloseButton ? "556px" : "500px") : "100%",
     boxSizing: "border-box",
     borderRadius: "15px",
+    width: "100%",
     maxWidth: "900px",
   }),
   form: {
@@ -23,6 +25,9 @@ export default makeStyles(() => ({
     justifyContent: "center",
   },
   fileInput: {
+    display: "flex",
+    alignItems: "center",
+    columnGap: "15px",
     width: "100%",
     margin: "10px 0",
     "& input[type=file]::file-selector-button": {

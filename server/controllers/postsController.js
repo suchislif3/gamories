@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import Post from "../models/post.js";
 import { Comment } from "../models/comment.js";
+import * as cloudinaryAPI from "../api/cloudinary.js";
 
 export const postsController = {
   async get(req, res) {
@@ -28,10 +29,9 @@ export const postsController = {
   },
 
   async getBySearch(req, res) {
+    const { searchTerm, tags } = req.query;
     try {
-      const { searchTerm, tags } = req.query;
       const searchTermRegExp = new RegExp(searchTerm, "i");
-
       const data = await Post.find({
         $or: [
           { author: searchTermRegExp },
@@ -48,38 +48,74 @@ export const postsController = {
   },
 
   async post(req, res) {
-    const post = req.body;
-    if (post.tags) post["tags"] = convertTagsIntoArray(post.tags);
-
+    const { post, base64Image } = req.body;
     try {
+      if (post.tags) post["tags"] = convertTagsIntoArray(post.tags);
+      if (base64Image) {
+        const imageUploadResponse = await cloudinaryAPI.uploadImage(
+          base64Image
+        );
+        console.log("Image uploaded");
+        console.log(imageUploadResponse);
+        post.image = {
+          publicId: imageUploadResponse?.public_id,
+          url: imageUploadResponse?.secure_url,
+        };
+      }
       const newPost = new Post({
         ...post,
         author: req.headers.user.name,
         authorId: req.headers.user.userId,
       });
-      await newPost.save();
+      const savedPost = await newPost.save();
+      console.log("post created");
+      console.log(savedPost);
       res.status(200).json({
         message: `Creating gamory '${post?.title}' successful.`,
-        post: newPost,
+        post: savedPost,
       });
     } catch (err) {
+      console.log(err);
       res.status(err.status || 500).json({ message: err.message });
     }
   },
 
   async patch(req, res) {
+    const { id: postId } = req.params;
+    const userId = req.headers.user.userId;
+    const { post, base64Image } = req.body;
     try {
-      const { id: postId } = req.params;
-      const userId = req.headers.user.userId;
       await isIdValid(postId);
       await checkForPermissionOnPost(postId, userId);
-      const post = req.body;
       if (post.tags && typeof post.tags === "string") {
         post["tags"] = convertTagsIntoArray(post.tags);
+      }
+      let oldImage = post.image;
+      if (base64Image) {
+        const imageUploadResponse = await cloudinaryAPI.uploadImage(
+          base64Image
+        );
+        console.log("New image uploaded");
+        console.log(imageUploadResponse);
+        post.image = {
+          publicId: imageUploadResponse?.public_id,
+          url: imageUploadResponse?.secure_url,
+        };
       }
       const updatedPost = await Post.findByIdAndUpdate(postId, post, {
         new: true,
       });
+      console.log("post updated");
+      console.log(updatedPost);
+      if (base64Image && oldImage.publicId) {
+        const imageDeleteResponse = await cloudinaryAPI.deleteImage(
+          oldImage.publicId
+        );
+        console.log(
+          `delete image ${oldImage.publicId}`,
+          imageDeleteResponse
+        );
+      }
       res.status(200).json({
         message: `Updating gamory '${post?.title}' successful.`,
         post: updatedPost,
@@ -96,10 +132,21 @@ export const postsController = {
       await isIdValid(postId);
       await checkForPermissionOnPost(postId, userId);
       const deletedPost = await Post.findByIdAndRemove(postId);
+      console.log("post deleted", deletedPost);
+      if (deletedPost?.image?.publicId) {
+        const imageDeleteResponse = await cloudinaryAPI.deleteImage(
+          deletedPost.image.publicId
+        );
+        console.log(
+          `delete image ${deletedPost.image.publicId}`,
+          imageDeleteResponse
+        );
+      }
       res.status(200).json({
         message: `Deleting gamory '${deletedPost.title}' successful.`,
       });
     } catch (err) {
+      console.log(err);
       res.status(err.status || 500).json({ message: err.message });
     }
   },

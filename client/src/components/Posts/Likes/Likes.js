@@ -1,4 +1,4 @@
-import React from "react";
+import React, {memo} from "react";
 import { useSelector } from "react-redux";
 
 import ThumbUpAltIcon from "@material-ui/icons/ThumbUpAlt";
@@ -35,4 +35,4 @@ const Likes = ({ post }) => {
   );
 };
 
-export default Likes;
+export default memo(Likes);

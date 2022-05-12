@@ -52,18 +52,29 @@ API.interceptors.response.use(
 );
 
 export const fetchPost = (id) => API.get(`/posts/${id}`);
-export const fetchPosts = (startId) => API.get(`/posts${startId ? "?startId="+startId : ""}`);
+export const fetchPosts = (startId) =>
+  API.get(`/posts${startId ? "?startId=" + startId : ""}`);
 export const fetchPostsBySearch = (searchQuery) =>
   API.get(
-    `/posts/search?searchTerm=${searchQuery.searchTerm || "none"}&tags=${searchQuery.tags || "none"}`
+    `/posts/search?searchTerm=${searchQuery.searchTerm || "none"}&tags=${
+      searchQuery.tags || "none"
+    }`
   );
-export const createPost = (newPost) => API.post("/posts", newPost);
-export const updatePost = (id, updatedPost) => API.patch(`/posts/${id}`, updatedPost);
+export const createPost = (newPost, base64Image) =>
+  API.post("/posts", { post: newPost, base64Image });
+
+export const updatePost = (id, updatedPost, base64Image) =>
+  API.patch(`/posts/${id}`, { post: updatedPost, base64Image });
+
 export const deletePost = (id) => API.delete(`/posts/${id}`);
 export const likePost = (id) => API.patch(`/posts/${id}/like`);
-export const commentPost = (id, comment) => API.post(`/posts/${id}/comment`, {comment});
+
+export const commentPost = (id, comment) =>
+  API.post(`/posts/${id}/comment`, { comment });
+
+export const fetchGamesBySearch = (searchTerm) =>
+  API.get(`/games/search?searchTerm=${searchTerm}`);
+  
 
 export const signIn = (formData) => API.post("/users/signin", formData);
 export const signUp = (formData) => API.post("/users/signup", formData);
-
-export const fetchGames = (searchTerm) => API.get(`/igdb/games?searchTerm=${searchTerm}`);
