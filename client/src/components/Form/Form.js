@@ -52,6 +52,8 @@ const Form = ({
   const [loading, setLoading] = useState(false);
   const [pendingRequest, setPendingRequest] = useState(false);
 
+  const isInitRender = useRef(true);
+
   const classes = useStyles({
     postId,
     absolutPosition,
@@ -84,23 +86,29 @@ const Form = ({
       title: false,
     });
     setSelectedFile(null);
+    setPreviewSource(null);
     setPendingRequest(false);
   };
 
   useEffect(() => {
-    if (gameValue === null) setPostData((prevData) => ({ ...prevData, game: "" }));
-    if (!gameInputValue) {
-      setLoading(false);
-      return;
-    }
-    if (gameInputValue && gameInputValue === gameValue?.name) {
-      setLoading(false);
-      setPostData((prevData) => ({ ...prevData, game: gameValue?.name }));
-      return;
-    }
-    if (gameInputValue) {
-      setLoading(true);
-      setIsInputError((prev) => ({ ...prev, game: false }));
+    if (isInitRender.current) {
+      isInitRender.current = false;
+    } else {
+      if (gameValue === null)
+        setPostData((prevData) => ({ ...prevData, game: "" }));
+      if (!gameInputValue) {
+        setLoading(false);
+        return;
+      }
+      if (gameInputValue && gameInputValue === gameValue?.name) {
+        setLoading(false);
+        setPostData((prevData) => ({ ...prevData, game: gameValue?.name }));
+        return;
+      }
+      if (gameInputValue) {
+        setLoading(true);
+        setIsInputError((prev) => ({ ...prev, game: false }));
+      }
     }
   }, [gameInputValue, gameValue]);
 
@@ -130,10 +138,10 @@ const Form = ({
       } else if (gameInputValue) {
         return;
       } else {
-        setGameOptions([]);
+        if (gameOptions.length) setGameOptions([]);
       }
     }
-  }, [gameInputValue, gameOpen, gameValue]);
+  }, [gameInputValue, gameOpen, gameOptions.length, gameValue]);
 
   const isFileImage = (file) => {
     if (file?.type.split("/")[0] === "image") {
