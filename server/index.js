@@ -4,8 +4,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const CONNECTION_URI =
-  "mongodb://localhost/testdb"; /* process.env.MONGODB_URI */
+const CONNECTION_URI = process.env.MONGODB_URI; 
 const PORT = process.env.PORT || 5000;
 
 mongoose
