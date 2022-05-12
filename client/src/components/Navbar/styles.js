@@ -34,7 +34,7 @@ export default makeStyles((theme) => ({
     },
   },
   brand: {
-    [theme.breakpoints.down("sm")]: {
+    [theme.breakpoints.down("md")]: {
       maxWidth: "240px",
     },
   },
@@ -42,16 +42,11 @@ export default makeStyles((theme) => ({
     display: "flex",
     justifyContent: "flex-end",
     padding: "0",
-    flexGrow: 1,
-    [theme.breakpoints.down("sm")]: {
-      justifyContent: "flex-start",
-    },
   },
   profile: {
     display: "flex",
-    justifyContent: "space-between",
     alignItems: "center",
-    gap: "10px",
+    gap: "30px",
     [theme.breakpoints.down("sm")]: {
       margin: "16px 0",
     },
