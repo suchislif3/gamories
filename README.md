@@ -1,4 +1,5 @@
 # gamories
+[Live Demo](https://gamories.vercel.app/)
 
 ## description
 Social media app to share your best gaming memories.
@@ -27,7 +28,7 @@ MongoDB, Express, React, Node
 - `cd server`
 - `npm install`
 - copy .env.example as .env and replace the values in the .env file.
-- `npm devStart`
+- `npm run devStart`
 
 ### frontend
 - `cd client`
