@@ -1,8 +1,8 @@
 # gamories
-Gaming memories social media app
 
-## stack
-MongoDB, Express, React, Node
+## description
+Social media app to share your best gaming memories.
+Upload your screenshot from the video game and tell the story to it.
 
 ## main features
 - jwt authentication
@@ -17,8 +17,27 @@ MongoDB, Express, React, Node
 - infinite scrolling
 - light and dark mode
 
+## built with
+MongoDB, Express, React, Node
 
-## what was new to me / what I learned in this project
+## installation and setup
+- clone this repo by running git clone https://github.com/suchislif3/gamories.git
+
+### backend
+- `cd server`
+- `npm install`
+- copy .env.example as .env and replace the values in the .env file.
+- `npm devStart`
+
+### frontend
+- `cd client`
+- `npm install`
+- copy .env.example as .env and replace the values in the .env file.
+- `npm start`
+
+Open http://localhost:3000 in your browser to see the result.
+
+## what I learned in this project
 - MongoDB
 - Redux
 - Material UI
@@ -28,4 +47,8 @@ MongoDB, Express, React, Node
 - autocomplete search input using IGDB API with debouncing
 - image upload/delete using Cloudinary API
 - React Dev Tools Profiler
-- using IndexedDB storage
+- IndexedDB storage
+
+## screenshots
+
+...coming
