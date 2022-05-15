@@ -1,9 +1,20 @@
 # gamories
 [Live Demo](https://gamories.vercel.app/)
 
+## Table of Contents
+
+- [Description](#description)
+- [Main features](#main-features)
+- [Built with](#built-with)
+- [Installation and setup](#installation-and-setup)
+- [What I learned in this project](#what-i-learned-in-this-project)
+- [Screenshots](#screenshots)
+
 ## description
 Social media app to share your best gaming memories.
-Upload your screenshot from the video game and tell the story to it.
+Upload your screenshot from a video game and tell the story to it.
+It doesn't matter if it’s about a bug, a funny moment, or the most successful match of your life.
+If the memory is nice to you, it has a place in gamories.
 
 ## main features
 - jwt authentication
@@ -51,5 +62,7 @@ Open http://localhost:3000 in your browser to see the result.
 - IndexedDB storage
 
 ## screenshots
-
-...coming
+![home](https://user-images.githubusercontent.com/79847008/168468652-37493de4-68a7-4614-a60a-c2e5f19b8716.png)
+![edit](https://user-images.githubusercontent.com/79847008/168468610-112480e5-18a4-4542-bd05-eb0d2267fdf2.png)
+![postdetails](https://user-images.githubusercontent.com/79847008/168468705-3e628352-c339-46ec-b6d8-517bd58f145a.png)
+![signup](https://user-images.githubusercontent.com/79847008/168468686-d88d81bc-4d46-404c-bc8f-e40eee0ee75c.png)
