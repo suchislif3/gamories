@@ -9,6 +9,7 @@
 - [Installation and setup](#installation-and-setup)
 - [What I learned in this project](#what-i-learned-in-this-project)
 - [Screenshots](#screenshots)
+- [Credits](#credits)
 
 ## description
 Social media app to share your best gaming memories.
@@ -59,6 +60,7 @@ Open http://localhost:3000 in your browser to see the result.
 - autocomplete search input using IGDB API with debouncing
 - image upload/delete using Cloudinary API
 - React Dev Tools Profiler
+- React memo, useCallback
 - IndexedDB storage
 
 ## screenshots
@@ -66,3 +68,6 @@ Open http://localhost:3000 in your browser to see the result.
 ![edit](https://user-images.githubusercontent.com/79847008/168468610-112480e5-18a4-4542-bd05-eb0d2267fdf2.png)
 ![postdetails](https://user-images.githubusercontent.com/79847008/168468705-3e628352-c339-46ec-b6d8-517bd58f145a.png)
 ![signup](https://user-images.githubusercontent.com/79847008/168468686-d88d81bc-4d46-404c-bc8f-e40eee0ee75c.png)
+
+## credits
+- [Build and Deploy a Full Stack MERN Social Media App ](https://www.youtube.com/watch?v=VsUzmlZfYNg)
