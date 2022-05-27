@@ -34,7 +34,7 @@ If the memory is nice to you, it has a place in gamories.
 MongoDB, Express, React, Node
 
 ## installation and setup
-- clone this repo by running git clone https://github.com/suchislif3/gamories.git
+- clone this repo by running `git clone https://github.com/suchislif3/gamories.git`
 
 ### backend
 - `cd server`
